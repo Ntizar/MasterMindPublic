@@ -1,0 +1,24 @@
+# Secretos — NUNCA al repo
+.env
+*.env
+!.env.example
+
+# Estado de máquina
+*.lock
+*.log
+*.usage.json
+.cache/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# Entornos
+.venv/
+venv/
+node_modules/
+
+# Datos locales
+chromadb/
+*.sqlite
+*.db

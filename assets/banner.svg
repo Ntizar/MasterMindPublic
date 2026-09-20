@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 400" width="1600" height="400">
+  <defs>
+    <!-- Gradient de fondo -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0f1e"/>
+      <stop offset="50%" style="stop-color:#0f1833"/>
+      <stop offset="100%" style="stop-color:#0a0f1e"/>
+    </linearGradient>
+    <!-- Gradiente azul principal -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#60a5fa"/>
+    </linearGradient>
+    <!-- Gradiente naranja acento -->
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f97316"/>
+      <stop offset="100%" style="stop-color:#fb923c"/>
+    </linearGradient>
+    <!-- Glow azul -->
+    <filter id="glowBlue" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Glow naranja -->
+    <filter id="glowOrange" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Glass card effect -->
+    <filter id="glass">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2"/>
+    </filter>
+  </defs>
+
+  <!-- Fondo -->
+  <rect width="1600" height="400" fill="url(#bg)"/>
+
+  <!-- Grid sutil de fondo -->
+  <g opacity="0.04" stroke="#3b82f6" stroke-width="0.5">
+    <line x1="0" y1="50" x2="1600" y2="50"/>
+    <line x1="0" y1="100" x2="1600" y2="100"/>
+    <line x1="0" y1="150" x2="1600" y2="150"/>
+    <line x1="0" y1="200" x2="1600" y2="200"/>
+    <line x1="0" y1="250" x2="1600" y2="250"/>
+    <line x1="0" y1="300" x2="1600" y2="300"/>
+    <line x1="0" y1="350" x2="1600" y2="350"/>
+    <line x1="200" y1="0" x2="200" y2="400"/>
+    <line x1="400" y1="0" x2="400" y2="400"/>
+    <line x1="600" y1="0" x2="600" y2="400"/>
+    <line x1="800" y1="0" x2="800" y2="400"/>
+    <line x1="1000" y1="0" x2="1000" y2="400"/>
+    <line x1="1200" y1="0" x2="1200" y2="400"/>
+    <line x1="1400" y1="0" x2="1400" y2="400"/>
+  </g>
+
+  <!-- Orbes decorativos de fondo -->
+  <circle cx="150" cy="200" r="180" fill="#3b82f6" opacity="0.03"/>
+  <circle cx="1450" cy="200" r="180" fill="#f97316" opacity="0.03"/>
+  <circle cx="800" cy="350" r="250" fill="#3b82f6" opacity="0.02"/>
+
+  <!-- Pipeline visual: nodos de agentes conectados -->
+  <g transform="translate(85, 285)">
+    <!-- Linea de conexion -->
+    <line x1="0" y1="0" x2="1430" y2="0" stroke="#3b82f6" stroke-width="1.5" opacity="0.3" stroke-dasharray="8,4"/>
+
+    <!-- Nodos agentes (11) -->
+    <g filter="url(#glowBlue)">
+      <circle cx="0" cy="0" r="8" fill="#3b82f6" opacity="0.7"/>
+      <circle cx="143" cy="0" r="6" fill="#60a5fa" opacity="0.5"/>
+      <circle cx="286" cy="0" r="6" fill="#60a5fa" opacity="0.5"/>
+      <circle cx="429" cy="0" r="6" fill="#60a5fa" opacity="0.5"/>
+      <circle cx="572" cy="0" r="6" fill="#60a5fa" opacity="0.5"/>
+      <circle cx="715" cy="0" r="8" fill="#3b82f6" opacity="0.7"/>
+      <circle cx="858" cy="0" r="6" fill="#60a5fa" opacity="0.5"/>
+      <circle cx="1001" cy="0" r="7" fill="#f97316" opacity="0.6"/>
+      <circle cx="1144" cy="0" r="6" fill="#60a5fa" opacity="0.5"/>
+      <circle cx="1287" cy="0" r="6" fill="#60a5fa" opacity="0.5"/>
+      <circle cx="1430" cy="0" r="8" fill="#f97316" opacity="0.7"/>
+    </g>
+
+    <!-- Labels de los nodos clave -->
+    <text x="0" y="25" fill="#93c5fd" font-family="monospace" font-size="9" text-anchor="middle" opacity="0.5">orchestrator</text>
+    <text x="715" y="25" fill="#93c5fd" font-family="monospace" font-size="9" text-anchor="middle" opacity="0.5">implementer</text>
+    <text x="1001" y="25" fill="#fdba74" font-family="monospace" font-size="9" text-anchor="middle" opacity="0.5">critic</text>
+    <text x="1430" y="25" fill="#fdba74" font-family="monospace" font-size="9" text-anchor="middle" opacity="0.5">archiver</text>
+  </g>
+
+  <!-- Icono cerebro estilizado (izquierda) -->
+  <g transform="translate(120, 120)">
+    <!-- Cerebro simplificado con circuitos -->
+    <circle cx="0" cy="0" r="45" fill="none" stroke="url(#blueGrad)" stroke-width="2" opacity="0.6"/>
+    <circle cx="0" cy="0" r="30" fill="none" stroke="#60a5fa" stroke-width="1" opacity="0.3"/>
+    <!-- Nodos internos del cerebro -->
+    <circle cx="-12" cy="-10" r="4" fill="#3b82f6" opacity="0.8"/>
+    <circle cx="12" cy="-10" r="4" fill="#3b82f6" opacity="0.8"/>
+    <circle cx="0" cy="8" r="4" fill="#f97316" opacity="0.8"/>
+    <circle cx="-18" cy="10" r="3" fill="#60a5fa" opacity="0.5"/>
+    <circle cx="18" cy="10" r="3" fill="#60a5fa" opacity="0.5"/>
+    <!-- Conexiones -->
+    <line x1="-12" y1="-10" x2="12" y2="-10" stroke="#93c5fd" stroke-width="1" opacity="0.4"/>
+    <line x1="-12" y1="-10" x2="0" y2="8" stroke="#93c5fd" stroke-width="1" opacity="0.4"/>
+    <line x1="12" y1="-10" x2="0" y2="8" stroke="#93c5fd" stroke-width="1" opacity="0.4"/>
+    <line x1="-18" y1="10" x2="0" y2="8" stroke="#93c5fd" stroke-width="1" opacity="0.3"/>
+    <line x1="18" y1="10" x2="0" y2="8" stroke="#93c5fd" stroke-width="1" opacity="0.3"/>
+  </g>
+
+  <!-- Titulo principal -->
+  <text x="800" y="115" text-anchor="middle" fill="#f1f5f9" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="700" font-size="62" letter-spacing="-1">
+    Ntizar Mastermind
+  </text>
+
+  <!-- Subtitulo con formula -->
+  <text x="800" y="160" text-anchor="middle" fill="#93c5fd" font-family="monospace" font-size="22" opacity="0.8">
+    (OpenCode + Obsidian) ^ Multi-Agent AI
+  </text>
+
+  <!-- Tagline -->
+  <text x="800" y="200" text-anchor="middle" fill="#94a3b8" font-family="'Segoe UI', system-ui, sans-serif" font-size="16" opacity="0.7">
+    11 agentes  |  memoria Ebbinghaus  |  multi-modelo  |  auto-mejora continua
+  </text>
+
+  <!-- Tags/badges -->
+  <g transform="translate(800, 235)">
+    <!-- v3.0 -->
+    <rect x="-260" y="-13" width="60" height="26" rx="13" fill="#3b82f6" opacity="0.2"/>
+    <text x="-230" y="4" text-anchor="middle" fill="#60a5fa" font-family="monospace" font-size="12" font-weight="600">v3.0</text>
+
+    <!-- Liquid Glass -->
+    <rect x="-170" y="-13" width="110" height="26" rx="13" fill="#3b82f6" opacity="0.12"/>
+    <text x="-115" y="4" text-anchor="middle" fill="#93c5fd" font-family="monospace" font-size="11">Liquid Glass</text>
+
+    <!-- Open Source -->
+    <rect x="-35" y="-13" width="110" height="26" rx="13" fill="#f97316" opacity="0.15"/>
+    <text x="20" y="4" text-anchor="middle" fill="#fdba74" font-family="monospace" font-size="11">Open Source</text>
+
+    <!-- MIT -->
+    <rect x="100" y="-13" width="55" height="26" rx="13" fill="#3b82f6" opacity="0.12"/>
+    <text x="127" y="4" text-anchor="middle" fill="#93c5fd" font-family="monospace" font-size="11">MIT</text>
+
+    <!-- ES/EN -->
+    <rect x="180" y="-13" width="70" height="26" rx="13" fill="#f97316" opacity="0.12"/>
+    <text x="215" y="4" text-anchor="middle" fill="#fdba74" font-family="monospace" font-size="11">ES | EN</text>
+  </g>
+
+  <!-- Borde inferior luminoso -->
+  <rect x="200" y="395" width="1200" height="2" fill="url(#blueGrad)" opacity="0.3" rx="1"/>
+  <rect x="600" y="395" width="400" height="2" fill="url(#orangeGrad)" opacity="0.4" rx="1"/>
+</svg>

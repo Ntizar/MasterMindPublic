@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NtizarBrainMasterMind — Cómo funciona de verdad</title>
+
+  <!-- Aurora CSS via CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Ntizar-Aurora@master/ntizar.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Ntizar-Aurora@master/ntizar.themes.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Ntizar-Aurora@master/ntizar.next.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Ntizar-Aurora@master/ntizar.data.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Ntizar-Aurora@master/ntizar.ui.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Ntizar-Aurora@master/ntizar.patterns.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Ntizar-Aurora@master/ntizar.motion.css">
+
+  <style>
+    /* Shell CSS — contexto visual para los componentes Aurora */
+    :root {
+      --shell-bg: #ffffff;
+      --shell-max-width: 72rem;
+    }
+
+    body.nz {
+      background: var(--shell-bg);
+      font-family: var(--nz-font-sans);
+      color: var(--nz-text-default);
+      line-height: 1.6;
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: var(--shell-max-width);
+      margin: 0 auto;
+      padding: var(--nz-space-4) var(--nz-space-3);
+    }
+
+    @media (min-width: 768px) {
+      .page-wrap { padding: var(--nz-space-6) var(--nz-space-5); }
+    }
+
+    /* Hero compacto */
+    .hero-section {
+      text-align: center;
+      padding: var(--nz-space-5) 0 var(--nz-space-4);
+    }
+
+    .hero-section .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--nz-space-1);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--nz-color-accent);
+      margin-bottom: var(--nz-space-2);
+    }
+
+    .hero-section h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 0 0 var(--nz-space-2);
+    }
+
+    .hero-section .hero-sub {
+      font-size: 0.95rem;
+      color: var(--nz-text-muted);
+      max-width: 36rem;
+      margin: 0 auto;
+    }
+
+    /* Secciones */
+    .section {
+      padding: var(--nz-space-5) 0;
+    }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0 0 var(--nz-space-1);
+      display: flex;
+      align-items: center;
+      gap: var(--nz-space-2);
+    }
+
+    .section-title .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: var(--nz-radius-pill);
+      background: var(--nz-gradient-aurora);
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .section-desc {
+      font-size: 0.875rem;
+      color: var(--nz-text-muted);
+      margin: 0 0 var(--nz-space-3);
+    }
+
+    /* Grid de capas */
+    .layers-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--nz-space-3);
+    }
+
+    @media (min-width: 768px) {
+      .layers-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .layer-card {
+      position: relative;
+      padding: var(--nz-space-3);
+      border-radius: var(--nz-radius-lg);
+    }
+
+    .layer-card .layer-icon {
+      font-size: 1.5rem;
+      margin-bottom: var(--nz-space-1);
+    }
+
+    .layer-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 0 0 var(--nz-space-1);
+    }
+
+    .layer-card .layer-path {
+      font-family: var(--nz-font-mono);
+      font-size: 0.72rem;
+      color: var(--nz-color-accent);
+      margin-bottom: var(--nz-space-2);
+      word-break: break-all;
+    }
+
+    .layer-card p {
+      font-size: 0.82rem;
+      color: var(--nz-text-muted);
+      margin: 0;
+    }
+
+    /* Flow diagram */
+    .flow-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--nz-space-2);
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--nz-space-3);
+      padding: var(--nz-space-2) var(--nz-space-3);
+      border-radius: var(--nz-radius-md);
+      position: relative;
+    }
+
+    .flow-step .step-num {
+      flex-shrink: 0;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: var(--nz-radius-pill);
+      background: var(--nz-color-brand);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.1rem;
+    }
+
+    .flow-step .step-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .flow-step .step-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin: 0 0 0.15rem;
+    }
+
+    .flow-step .step-desc {
+      font-size: 0.78rem;
+      color: var(--nz-text-muted);
+      margin: 0;
+    }
+
+    .flow-step .step-code {
+      font-family: var(--nz-font-mono);
+      font-size: 0.7rem;
+      background: var(--nz-surface-soft);
+      padding: 0.15rem 0.4rem;
+      border-radius: var(--nz-radius-sm);
+      color: var(--nz-color-brand);
+      margin-top: 0.3rem;
+      display: inline-block;
+    }
+
+    .flow-arrow {
+      text-align: center;
+      color: var(--nz-color-accent);
+      font-size: 0.9rem;
+      line-height: 1;
+      margin: -0.2rem 0;
+    }
+
+    /* KPIs compactos */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--nz-space-2);
+      margin-bottom: var(--nz-space-3);
+    }
+
+    @media (min-width: 600px) {
+      .stats-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .stat-tile {
+      text-align: center;
+      padding: var(--nz-space-2) var(--nz-space-1);
+    }
+
+    .stat-tile .stat-value {
+      font-size: 1.2rem;
+      font-weight: 800;
+      background: var(--nz-gradient-aurora);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .stat-tile .stat-label {
+      font-size: 0.7rem;
+      color: var(--nz-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.15rem;
+    }
+
+    /* Tech stack list */
+    .stack-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--nz-space-1);
+    }
+
+    .stack-list li {
+      display: flex;
+      align-items: baseline;
+      gap: var(--nz-space-2);
+      font-size: 0.82rem;
+      padding: var(--nz-space-1) 0;
+      border-bottom: 1px solid var(--nz-border-soft);
+    }
+
+    .stack-list li:last-child { border-bottom: none; }
+
+    .stack-list .stack-key {
+      font-weight: 700;
+      color: var(--nz-color-brand);
+      min-width: 5.5rem;
+      flex-shrink: 0;
+    }
+
+    .stack-list .stack-val {
+      color: var(--nz-text-default);
+      font-family: var(--nz-font-mono);
+      font-size: 0.78rem;
+    }
+
+    /* Scripts table */
+    .scripts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--nz-space-2);
+    }
+
+    @media (min-width: 600px) {
+      .scripts-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .script-item {
+      padding: var(--nz-space-2) var(--nz-space-3);
+      border-radius: var(--nz-radius-md);
+      border: 1px solid var(--nz-border-soft);
+    }
+
+    .script-item .script-name {
+      font-family: var(--nz-font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--nz-color-brand);
+      margin-bottom: 0.15rem;
+    }
+
+    .script-item .script-desc {
+      font-size: 0.75rem;
+      color: var(--nz-text-muted);
+      margin: 0;
+    }
+
+    /* Lifecycle bars */
+    .lifecycle-bar {
+      display: flex;
+      height: 2rem;
+      border-radius: var(--nz-radius-sm);
+      overflow: hidden;
+      margin: var(--nz-space-2) 0;
+    }
+
+    .lifecycle-bar .seg {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .lifecycle-bar .seg-high { background: var(--nz-color-brand); }
+    .lifecycle-bar .seg-med { background: var(--nz-color-accent); }
+    .lifecycle-bar .seg-low { background: var(--nz-color-slate-400); }
+
+    .lifecycle-legend {
+      display: flex;
+      gap: var(--nz-space-3);
+      flex-wrap: wrap;
+      font-size: 0.72rem;
+      color: var(--nz-text-muted);
+    }
+
+    .lifecycle-legend .dot {
+      display: inline-block;
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: var(--nz-radius-pill);
+      margin-right: 0.3rem;
+      vertical-align: middle;
+    }
+
+    /* GitHub sync flow */
+    .sync-flow {
+      display: flex;
+      flex-direction: column;
+      gap: var(--nz-space-2);
+      align-items: stretch;
+    }
+
+    @media (min-width: 600px) {
+      .sync-flow {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .sync-node {
+      flex: 1;
+      text-align: center;
+      padding: var(--nz-space-2);
+      border-radius: var(--nz-radius-md);
+    }
+
+    .sync-node .sync-icon { font-size: 1.3rem; }
+    .sync-node .sync-label { font-size: 0.75rem; font-weight: 600; margin-top: 0.2rem; }
+    .sync-node .sync-detail { font-size: 0.68rem; color: var(--nz-text-muted); }
+
+    .sync-arrow {
+      text-align: center;
+      color: var(--nz-color-accent);
+      font-size: 1.1rem;
+    }
+
+    @media (min-width: 600px) {
+      .sync-arrow { transform: rotate(0deg); }
+    }
+
+    /* Footer */
+    .page-footer {
+      text-align: center;
+      padding: var(--nz-space-5) 0 var(--nz-space-4);
+      font-size: 0.8rem;
+      color: var(--nz-text-muted);
+      border-top: 1px solid var(--nz-border-soft);
+      margin-top: var(--nz-space-4);
+    }
+
+    .page-footer .heart { color: var(--nz-color-accent); }
+
+    /* Code block */
+    .code-block {
+      font-family: var(--nz-font-mono);
+      font-size: 0.72rem;
+      background: var(--nz-surface-soft);
+      border: 1px solid var(--nz-border-soft);
+      border-radius: var(--nz-radius-md);
+      padding: var(--nz-space-2) var(--nz-space-3);
+      overflow-x: auto;
+      margin: var(--nz-space-2) 0;
+      line-height: 1.5;
+      color: var(--nz-text-default);
+    }
+
+    .code-block .comment { color: var(--nz-text-soft); }
+    .code-block .keyword { color: var(--nz-color-brand); font-weight: 600; }
+    .code-block .string { color: var(--nz-color-accent); }
+
+    /* Badge row */
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--nz-space-1);
+      margin-top: var(--nz-space-2);
+    }
+  </style>
+</head>
+
+<body class="nz"
+      data-nz-theme="light"
+      data-nz-skin="aurora"
+      data-nz-shape="default"
+      data-nz-density="comfortable"
+      data-nz-motion="standard">
+
+  <!-- Mesh sutil de fondo -->
+  <div class="nz-aurora-mesh" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.4;"></div>
+
+  <div class="page-wrap">
+
+    <!-- ═══════════════ HERO ═══════════════ -->
+    <header class="hero-section nz-anim-fade-in">
+      <div class="hero-eyebrow">
+        <span>⚙️</span> Sistema personal de agentes IA
+      </div>
+      <h1>NtizarBrainMasterMind</h1>
+      <p class="hero-sub">
+        Un agente IA (Mastermind) que vive en una MicroVM, aprende de cada tarea,
+        indexa su conocimiento en una base de datos vectorial, y respalda todo en GitHub.
+        Esto es cómo funciona de verdad — no lo que dicen los readmes.
+      </p>
+      <div class="badge-row" style="justify-content:center;">
+        <span class="nz-badge nz-badge--glass-brand">240 skills</span>
+        <span class="nz-badge nz-badge--glass-accent">ChromaDB v2</span>
+        <span class="nz-badge nz-badge--glass">embeddings (modelo configurable)</span>
+        <span class="nz-badge nz-badge--glass">tu proveedor compatible con OpenAI</span>
+        <span class="nz-badge nz-badge--glass-brand">Hermes Agent</span>
+      </div>
+    </header>
+
+    <!-- ═══════════════ KPIs ═══════════════ -->
+    <section class="section">
+      <div class="stats-grid">
+        <div class="stat-tile nz-card--glass-liquid nz-hover-lift">
+          <div class="stat-value">240</div>
+          <div class="stat-label">Skills indexados</div>
+        </div>
+        <div class="stat-tile nz-card--glass-liquid nz-hover-lift">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Capas de conocimiento</div>
+        </div>
+        <div class="stat-tile nz-card--glass-liquid nz-hover-lift">
+          <div class="stat-value">~120</div>
+          <div class="stat-label">Skills en cola de aprendizaje</div>
+        </div>
+        <div class="stat-tile nz-card--glass-liquid nz-hover-lift">
+          <div class="stat-value">1vCPU</div>
+          <div class="stat-label">MicroVM tu proveedor compatible con OpenAI</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 1. ARQUITECTURA ═══════════════ -->
+    <section class="section nz-anim-fade-in nz-anim--delay-2">
+      <h2 class="section-title">
+        <span class="num">1</span> Tres capas de conocimiento
+      </h2>
+      <p class="section-desc">
+        Mastermind no tiene una sola memoria. Tiene tres sistemas independientes que se complementan:
+        memoria volátil (preferencias), skills (procedimientos), y repo GitHub (backup permanente).
+      </p>
+
+      <div class="layers-grid">
+        <!-- Capa 1: Memoria -->
+        <div class="layer-card nz-card--glass-liquid nz-hover-lift">
+          <div class="layer-icon">🧠</div>
+          <h3>Memoria Hermes</h3>
+          <div class="layer-path">/hermes-home/memories/</div>
+          <p>
+            Preferencias del usuario, entorno, lecciones aprendidas. Se inyecta en
+            <strong>cada turno</strong> automáticamente. Límite: 2.200 chars de memoria +
+            1.375 de perfil de usuario. Compacta y enfocada en lo que importa a largo plazo.
+          </p>
+        </div>
+
+        <!-- Capa 2: Skills -->
+        <div class="layer-card nz-card--glass-liquid nz-hover-lift">
+          <div class="layer-icon">📚</div>
+          <h3>Skills Hermes</h3>
+          <div class="layer-path">/hermes-home/skills/</div>
+          <p>
+            240 procedimientos reutilizables en formato <code>SKILL.md</code>
+            (YAML frontmatter + markdown). Cada skill es un directorio con instrucciones,
+            scripts, referencias y plantillas. Se cargan con <code>skill_view()</code>
+            cuando son relevantes para la tarea.
+          </p>
+        </div>
+
+        <!-- Capa 3: Repo -->
+        <div class="layer-card nz-card--glass-liquid nz-hover-lift">
+          <div class="layer-icon">🔒</div>
+          <h3>Repo GitHub</h3>
+          <div class="layer-path">github.com/Ntizar/NtizarBrainMasterMind</div>
+          <p>
+            Backup permanente de todo: skills, memories, config, scripts, notes.
+            Commits frecuentes ("Backup semanal", "Stars Explorer"). GitHub Pages
+            activo. Regla de oro: <strong>nunca se borra nada</strong>, solo se crea o modifica.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 2. FLUJO DE UN SKILL ═══════════════ -->
+    <section class="section nz-anim-fade-in nz-anim--delay-3">
+      <h2 class="section-title">
+        <span class="num">2</span> El flujo: de la petición al aprendizaje
+      </h2>
+      <p class="section-desc">
+        Cuando David pide algo, Mastermind no carga todos los skills a ciegas.
+        Usa búsqueda semántica en ChromaDB para encontrar solo los relevantes,
+        los carga, ejecuta, y si la tarea fue compleja, aprende de ella.
+      </p>
+
+      <div class="flow-container nz-card--glass-liquid" style="padding: var(--nz-space-3);">
+
+        <div class="flow-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <p class="step-title">David envía una petición</p>
+            <p class="step-desc">Llega por Telegram, WebUI o Discord. Mastermind la recibe en español, tuteo informal.</p>
+          </div>
+        </div>
+
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <p class="step-title">Búsqueda semántica en ChromaDB</p>
+            <p class="step-desc">Antes de cargar ningún skill, Mastermind extrae palabras clave y consulta ChromaDB.</p>
+            <div class="step-code">consultar-skills.py "palabras clave" --json</div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <p class="step-title">Filtrar por relevancia (score &gt; 0.25)</p>
+            <p class="step-desc">
+              el modelo de embeddings genera el vector de consulta → ChromaDB devuelve los skills
+              más cercanos por similitud coseno. Threshold bajo porque el modelo rara vez
+              da &gt;0.5 incluso para matches perfectos.
+            </p>
+          </div>
+        </div>
+
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <p class="step-title">Cargar skills relevantes</p>
+            <p class="step-desc">
+              Solo los skills con score &gt; 0.25 se cargan con <code>skill_view()</code>.
+              Sin límite arbitrario: si 50 skills son relevantes, se cargan los 50.
+            </p>
+          </div>
+        </div>
+
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <p class="step-title">Ejecutar la tarea</p>
+            <p class="step-desc">
+              Mastermind usa las herramientas (terminal, browser, file, delegate_task)
+              siguiendo las instrucciones de los skills cargados. Si es compleja (5+ pasos),
+              puede delegar a subagentes.
+            </p>
+          </div>
+        </div>
+
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <p class="step-title">Aprendizaje continuo</p>
+            <p class="step-desc">Después de tarea compleja (5+ tool calls), tres preguntas:</p>
+          </div>
+        </div>
+
+        <div style="padding-left: 2.5rem; display: flex; flex-direction: column; gap: var(--nz-space-1);">
+          <div class="nz-callout nz-callout--tip" style="font-size: 0.78rem;">
+            <strong>¿Merece skill?</strong> → <code>skill_manage(create)</code> crea un SKILL.md reutilizable
+          </div>
+          <div class="nz-callout nz-callout--info" style="font-size: 0.78rem;">
+            <strong>¿Merece nota?</strong> → <code>notes/YYYY-MM-DD-titulo.md</code> documenta el aprendizaje
+          </div>
+          <div class="nz-callout nz-callout--warn" style="font-size: 0.78rem;">
+            <strong>¿Merece memoria?</strong> → <code>memory(add)</code> guarda un hecho durable
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════ 3. ChromaDB ═══════════════ -->
+    <section class="section nz-anim-fade-in nz-anim--delay-4">
+      <h2 class="section-title">
+        <span class="num">3</span> ChromaDB — el cerebro semántico
+      </h2>
+      <p class="section-desc">
+        Una base de datos vectorial local que indexa los 240 skills. No busca por nombre,
+        busca por significado. Es lo que permite que Mastermind encuentre el skill correcto
+        sin saber que existe.
+      </p>
+
+      <div class="nz-card--glass-liquid" style="padding: var(--nz-space-3);">
+        <div class="code-block">
+<span class="comment"># Indexación: cada SKILL.md se convierte en un vector</span>
+<span class="keyword">texto</span> = name + description + tags + secciones del body
+<span class="keyword">embedding</span> = modelo_embedding(texto)  <span class="comment"># vía API tu proveedor</span>
+chromadb.collection.<span class="keyword">add</span>(id, embedding, metadata, document)
+
+<span class="comment"># Consulta: la petición del usuario se convierte en vector</span>
+<span class="keyword">query_embedding</span> = modelo_embedding("palabras clave")
+results = chromadb.collection.<span class="keyword">query</span>(query_embedding, n_results=5)
+<span class="comment"># → devuelve skills ordenados por similitud coseno</span>
+        </div>
+
+        <div class="badge-row">
+          <span class="nz-badge nz-badge--glass-brand">URL: localhost:8000</span>
+          <span class="nz-badge nz-badge--glass-accent">Colección: mastermind-skills</span>
+          <span class="nz-badge nz-badge--glass">Embeddings: modelo configurable</span>
+          <span class="nz-badge nz-badge--glass">Distancia: coseno</span>
+          <span class="nz-badge nz-badge--glass-brand">Re-index: domingo 04:00 UTC</span>
+        </div>
+      </div>
+
+      <div style="margin-top: var(--nz-space-3); font-size: 0.8rem; color: var(--nz-text-muted);">
+        <strong>Auto-start:</strong> Si ChromaDB no responde, Mastermind ejecuta
+        <code>start-chromadb.sh</code> y reintenta. Si sigue sin funcionar, fallback al
+        sistema tradicional (cargar por dominio desde <code>available_skills</code>).
+      </div>
+    </section>
+
+    <!-- ═══════════════ 4. SINCRONIZACIÓN GITHUB ═══════════════ -->
+    <section class="section nz-anim-fade-in nz-anim--delay-5">
+      <h2 class="section-title">
+        <span class="num">4</span> Sincronización con GitHub
+      </h2>
+      <p class="section-desc">
+        El repo <code>NtizarBrainMasterMind</code> es el backup permanente de todo el sistema.
+        Los skills aprendidos se guardan en dos sitios: Hermes (vivo, para uso inmediato)
+        y GitHub (backup, para persistencia y portabilidad).
+      </p>
+
+      <div class="nz-card--glass-liquid" style="padding: var(--nz-space-3);">
+        <div class="sync-flow">
+          <div class="sync-node nz-surface--brand-soft">
+            <div class="sync-icon">⚡</div>
+            <div class="sync-label">Hermes (vivo)</div>
+            <div class="sync-detail">/hermes-home/skills/<br>Uso inmediato</div>
+          </div>
+
+          <div class="sync-arrow">⇄</div>
+
+          <div class="sync-node nz-surface--accent-soft">
+            <div class="sync-icon">📦</div>
+            <div class="sync-label">Repo GitHub</div>
+            <div class="sync-detail">hermes-home/skills/<br>Backup + portabilidad</div>
+          </div>
+        </div>
+
+        <div style="margin-top: var(--nz-space-3); font-size: 0.8rem;">
+          <p style="margin: 0 0 var(--nz-space-2);">
+            <strong>¿Qué se respalda en GitHub?</strong>
+          </p>
+          <ul style="margin: 0; padding-left: 1.2rem; color: var(--nz-text-muted); font-size: 0.8rem; line-height: 1.7;">
+            <li><code>hermes-home/</code> — skills, memories, config, scripts (copia exacta)</li>
+            <li><code>hermes-backup/</code> — snapshot de memories y notes</li>
+            <li><code>mastermind/</code> — skills propios del sistema (SOUL.md, orquestación)</li>
+            <li><code>notes/</code> — notas de aprendizaje con fecha</li>
+            <li><code>memories/</code> — backup de memoria y perfil de usuario</li>
+            <li><code>config.yaml</code> — configuración completa de Hermes</li>
+          </ul>
+        </div>
+
+        <div class="code-block" style="margin-top: var(--nz-space-2);">
+<span class="comment"># Flujo de backup (backup-hermes-memory.sh)</span>
+git add -A
+git commit -m <span class="string">"auto: backup $(date +%Y-%m-%d)"</span>
+<span class="comment"># Push manual para evitar conflictos</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 5. SKILL LIFECYCLE ═══════════════ -->
+    <section class="section nz-anim-fade-in nz-anim--delay-6">
+      <h2 class="section-title">
+        <span class="num">5</span> Skill Lifecycle — priorización automática
+      </h2>
+      <p class="section-desc">
+        No todos los skills son iguales. Un script analiza el uso real (git log + notas)
+        y re-clasifica cada skill en tres niveles según su actividad.
+      </p>
+
+      <div class="nz-card--glass-liquid" style="padding: var(--nz-space-3);">
+        <div style="font-size: 0.82rem; margin-bottom: var(--nz-space-2);">
+          <strong>Fórmula de usage score:</strong>
+          <span class="code-block" style="display:inline-block; margin-top: 0.3rem;">
+score = git_mentions × 0.4 + notes_mentions × 0.4 + partial_matches × 0.2
+          </span>
+        </div>
+
+        <div class="lifecycle-bar">
+          <div class="seg seg-high" style="flex: 17;">HIGH</div>
+          <div class="seg seg-med" style="flex: 30;">MEDIUM</div>
+          <div class="seg seg-low" style="flex: 53;">LOW</div>
+        </div>
+
+        <div class="lifecycle-legend">
+          <span><span class="dot" style="background:var(--nz-color-brand);"></span>HIGH (≥0.6) — uso activo, siempre cargados</span>
+          <span><span class="dot" style="background:var(--nz-color-accent);"></span>MEDIUM (0.3-0.6) — uso moderado</span>
+          <span><span class="dot" style="background:var(--nz-color-slate-400);"></span>LOW (&lt;0.3) — archivo, solo si se piden</span>
+        </div>
+
+        <div style="margin-top: var(--nz-space-3); font-size: 0.8rem; color: var(--nz-text-muted);">
+          <strong>Excepción:</strong> Los skills de <code>mastermind/</code> (orquestación, ChromaDB, deploy)
+          son siempre HIGH sin importar el score — son infraestructura crítica del sistema.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 6. SCRIPTS DEL SISTEMA ═══════════════ -->
+    <section class="section nz-anim-fade-in nz-anim--delay-6">
+      <h2 class="section-title">
+        <span class="num">6</span> Scripts que mantienen vivo el sistema
+      </h2>
+      <p class="section-desc">
+        Python y bash que automatizan indexación, aprendizaje, backup y análisis.
+        Viven en <code>/hermes-home/scripts/</code> y se ejecutan vía cron o manualmente.
+      </p>
+
+      <div class="scripts-grid">
+        <div class="script-item">
+          <div class="script-name">consultar-skills.py</div>
+          <p class="script-desc">Búsqueda semántica en ChromaDB. Genera embedding de la consulta y devuelve skills por similitud.</p>
+        </div>
+        <div class="script-item">
+          <div class="script-name">indexar-skills.py</div>
+          <p class="script-desc">Indexa todos los SKILL.md en ChromaDB. Lee frontmatter, genera embeddings, guarda en lotes.</p>
+        </div>
+        <div class="script-item">
+          <div class="script-name">skill-lifecycle.py</div>
+          <p class="script-desc">Analiza uso real (git + notas, 30 días) y re-clasifica skills en HIGH/MEDIUM/LOW.</p>
+        </div>
+        <div class="script-item">
+          <div class="script-name">skill-learning.sh</div>
+          <p class="script-desc">Instala 1 skill nuevo del hub Hermes cada ejecución. Cola de ~120 skills priorizados.</p>
+        </div>
+        <div class="script-item">
+          <div class="script-name">backup-hermes-memory.sh</div>
+          <p class="script-desc">Copia memoria y SOUL.md al repo GitHub. Commit automático, push manual.</p>
+        </div>
+        <div class="script-item">
+          <div class="script-name">start-chromadb.sh</div>
+          <p class="script-desc">Auto-start de ChromaDB si no está corriendo. Usa venv Python aislado.</p>
+        </div>
+        <div class="script-item">
+          <div class="script-name">explorar-stars.py</div>
+          <p class="script-desc">Explora las stars de GitHub de David y genera skills nuevos a partir de repos interesantes.</p>
+        </div>
+        <div class="script-item">
+          <div class="script-name">ebbinghaus-decay.py</div>
+          <p class="script-desc">Repaso espaciado basado en la curva de olvido de Ebbinghaus. Refuerza skills poco usados.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 7. STACK TÉCNICO ═══════════════ -->
+    <section class="section nz-anim-fade-in nz-anim--delay-7">
+      <h2 class="section-title">
+        <span class="num">7</span> Stack técnico real
+      </h2>
+      <p class="section-desc">
+        No es marketing. Es lo que hay configurado en <code>config.yaml</code> y corriendo ahora mismo.
+      </p>
+
+      <div class="nz-card--glass-liquid" style="padding: var(--nz-space-3);">
+        <ul class="stack-list">
+          <li>
+            <span class="stack-key">Modelo</span>
+            <span class="stack-val">API compatible con OpenAI (tu proveedor por defecto) — modelo configurable</span>
+          </li>
+          <li>
+            <span class="stack-key">Infra</span>
+            <span class="stack-val">MicroVM 1vCPU / 2GB RAM / 20GB disco — tu proveedor compatible con OpenAI</span>
+          </li>
+          <li>
+            <span class="stack-key">Agente</span>
+            <span class="stack-val">Hermes Agent — max_turns: 90, reasoning_effort: medium</span>
+          </li>
+          <li>
+            <span class="stack-key">Vector DB</span>
+            <span class="stack-val">ChromaDB v2 (localhost:8000) — colección mastermind-skills</span>
+          </li>
+          <li>
+            <span class="stack-key">Embeddings</span>
+            <span class="stack-val">embeddings vía tu proveedor API — distancia coseno</span>
+          </li>
+          <li>
+            <span class="stack-key">GitHub</span>
+            <span class="stack-val">Ntizar/NtizarBrainMasterMind — auth via token HTTPS</span>
+          </li>
+          <li>
+            <span class="stack-key">TTS</span>
+            <span class="stack-val">Edge TTS — voz es-ES-AlvaroNeural</span>
+          </li>
+          <li>
+            <span class="stack-key">STT</span>
+            <span class="stack-val">Whisper local (modelo base)</span>
+          </li>
+          <li>
+            <span class="stack-key">Delegación</span>
+            <span class="stack-val">max 3 subagentes concurrentes, profundidad 1</span>
+          </li>
+          <li>
+            <span class="stack-key">Memoria</span>
+            <span class="stack-val">2.200 chars (memoria) + 1.375 chars (perfil usuario)</span>
+          </li>
+          <li>
+            <span class="stack-key">Curator</span>
+            <span class="stack-val">Auto-cada 168h — archiva skills stale tras 90 días</span>
+          </li>
+          <li>
+            <span class="stack-key">Idioma</span>
+            <span class="stack-val">Español — todo el sistema, sin excepciones</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 8. IDENTIDAD ═══════════════ -->
+    <section class="section nz-anim-fade-in nz-anim--delay-7">
+      <h2 class="section-title">
+        <span class="num">8</span> Quién es quién
+      </h2>
+      <p class="section-desc">
+        Distinción importante: David es el autor, Mastermind es el ejecutor.
+        El SOUL.md es la fuente de verdad de la identidad del agente.
+      </p>
+
+      <div class="layers-grid">
+        <div class="layer-card nz-card--glass-liquid nz-hover-lift">
+          <div class="layer-icon">👨‍💻</div>
+          <h3>David Antizar</h3>
+          <div class="layer-path">GitHub: Ntizar</div>
+          <p>
+            El autor. 36 años. Genera proyectos de programación enfocados en mapas
+            pero con visión global. Diseña el sistema, toma las decisiones, pone las reglas.
+            Todo artefacto lleva: "Hecho con ❤️ por David Antizar".
+          </p>
+        </div>
+
+        <div class="layer-card nz-card--glass-liquid nz-hover-lift">
+          <div class="layer-icon">🤖</div>
+          <h3>Mastermind</h3>
+          <div class="layer-path">Agente: modelo configurable (config.yaml)</div>
+          <p>
+            El ejecutor. Un agente IA que vive en Hermes, aprende de cada tarea,
+            y sigue las reglas del SOUL.md. No es el autor — es la herramienta.
+            Comunicación: español tuteo, informal, cercano.
+          </p>
+        </div>
+
+        <div class="layer-card nz-card--glass-liquid nz-hover-lift">
+          <div class="layer-icon">📜</div>
+          <h3>SOUL.md</h3>
+          <div class="layer-path">/hermes-home/SOUL.md</div>
+          <p>
+            La fuente de verdad. Define identidad, stack, reglas, pitfalls críticos,
+            filosofía de skills. Si se corrompe (&lt;1000 bytes), se recupera del repo.
+            Es lo que hace que Mastermind sea Mastermind y no un LLM genérico.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
+    <footer class="page-footer">
+      <p style="margin: 0 0 var(--nz-space-1);">
+        NtizarBrainMasterMind — Sistema personal de agentes IA
+      </p>
+      <p style="margin: 0;">
+        Hecho con <span class="heart">❤️</span> por David Antizar
+      </p>
+    </footer>
+
+  </div>
+
+</body>
+</html>

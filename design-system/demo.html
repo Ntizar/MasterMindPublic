@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ntizar Design System — Demo</title>
+  <link rel="stylesheet" href="ntizar.css">
+  <style>
+    /* Solo para este demo */
+    body {
+      background: var(--bg-base);
+      overflow-x: hidden;
+    }
+
+    /* Fondo con orbs decorativos */
+    .bg-scene {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .demo-section {
+      position: relative;
+      z-index: 1;
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .demo-section:last-child {
+      border-bottom: none;
+    }
+
+    .section-label {
+      font-size: var(--text-xs);
+      font-weight: var(--font-bold);
+      letter-spacing: var(--tracking-wider);
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-semi);
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-desc {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      margin-bottom: 2.5rem;
+      max-width: 560px;
+    }
+
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .demo-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Codigo inline */
+    .code-tag {
+      font-family: var(--font-mono);
+      font-size: 0.8em;
+      background: var(--glass-bg-subtle);
+      border: 1px solid var(--border-subtle);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--blue-300);
+    }
+
+    /* Chip de clase CSS */
+    .class-chip {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      color: var(--blue-300);
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+    }
+
+    /* Swatch de color */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .color-swatch {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .swatch-block {
+      height: 52px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      transition: transform var(--transition-fast);
+    }
+    .swatch-block:hover { transform: scale(1.05); }
+
+    .swatch-name {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-align: center;
+    }
+
+    /* Progress items */
+    .progress-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Hero section */
+    .hero-headline {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: var(--font-black);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    /* Glass preview panels */
+    .glass-preview {
+      border-radius: var(--radius-xl);
+      padding: 3rem 2rem;
+      position: relative;
+      overflow: hidden;
+      background: #e8edf8;
+    }
+
+    /* Forzar texto oscuro dentro del preview (fondo claro) */
+    .glass-preview .card-title  { color: #0f1729; }
+    .glass-preview .card-body   { color: #374151; }
+    .glass-preview .class-chip  {
+      background: rgba(30, 64, 175, 0.12);
+      border-color: rgba(30, 64, 175, 0.25);
+      color: #1d4ed8;
+    }
+    /* Los paneles glass sobre fondo claro necesitan mas opacidad */
+    .glass-preview .glass-subtle   { background: rgba(255,255,255,0.45); backdrop-filter: blur(12px) saturate(1.8); }
+    .glass-preview .glass-standard { background: rgba(255,255,255,0.60); backdrop-filter: blur(20px) saturate(2.0); border-color: rgba(255,255,255,0.7); }
+    .glass-preview .glass-intense  { background: rgba(255,255,255,0.72); backdrop-filter: blur(32px) saturate(2.2); border-color: rgba(255,255,255,0.8); }
+    .glass-preview .glass-blue    { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.3); }
+    .glass-preview .glass-orange  { background: rgba(249,115,22,0.12);  border-color: rgba(249,115,22,0.3); }
+    .glass-preview .card-gradient-border { background: rgba(255,255,255,0.55); }
+    /* Tints de texto para variantes coloreadas */
+    .glass-preview .glass-blue  .card-title { color: #1d4ed8; }
+    .glass-preview .glass-orange .card-title { color: #c2410c; }
+
+    /* Formas de color debajo del glass */
+    .glass-preview-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Modal preview estático */
+    .modal-preview-wrap {
+      position: relative;
+      min-height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+
+    .modal-preview-bg {
+      position: absolute;
+      inset: 0;
+      /* Fondo colorido para que el blur del modal se vea bien */
+      background:
+        radial-gradient(ellipse 40% 40% at 20% 30%, #3b82f6 0%, transparent 60%),
+        radial-gradient(ellipse 35% 35% at 75% 60%, #f97316 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 50% 10%, #a855f7 0%, transparent 60%),
+        #1a1a2e;
+      filter: blur(0);
+    }
+
+    .modal-preview-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 380px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SVG Liquid Glass Filters (Chrome/Chromium refraction) -->
+  <!--
+    El filtro ntizar-glass-filter usa un displacement map generado por JS
+    con la fisica de Snell-Descartes (convex squircle, IOR 1.5).
+    En Chrome aplica refraccion real; otros navegadores ignoran el SVG filter
+    y usan solo backdrop-filter blur como fallback.
+  -->
+  <svg class="ntizar-svg-filters" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="ntizar-glass-filter" x="-30%" y="-30%" width="160%" height="160%"
+              color-interpolation-filters="sRGB">
+        <feImage id="ntizar-displacement-img"
+          href=""
+          x="0" y="0" width="1" height="1"
+          result="displacement_map"
+          preserveAspectRatio="none"/>
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="displacement_map"
+          scale="28"
+          xChannelSelector="R"
+          yChannelSelector="G"
+          result="refracted"/>
+        <!-- Specular highlight via lighting -->
+        <feGaussianBlur stdDeviation="1" in="refracted" result="blurred_for_spec"/>
+        <feComposite in="refracted" in2="blurred_for_spec" operator="over"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <script>
+  // Genera el displacement map con fisica de refraccion Snell-Descartes
+  // Superficie convex-squircle (la que usa Apple), IOR = 1.5
+  (function() {
+    const SIZE = 128;
+    const BEZEL = 0.22;   // fraccion del radio dedicada al bisel
+    const IOR   = 1.5;    // indice de refraccion del vidrio
+
+    // Funcion de altura — convex squircle (suave, sin aristas duras)
+    function surfaceHeight(t) {
+      return Math.pow(1 - Math.pow(1 - t, 4), 0.25);
+    }
+
+    // Derivada numerica
+    function derivative(f, x, dx = 0.001) {
+      return (f(x + dx) - f(x - dx)) / (2 * dx);
+    }
+
+    // Refraccion de Snell en 2D: normal (nx,ny) normalizado, rayo incidente (0,1)
+    function snellRefract(nx, ny, n1, n2) {
+      // Normalizar normal
+      const len = Math.sqrt(nx * nx + ny * ny);
+      nx /= len; ny /= len;
+      // cos del angulo de incidencia (rayo hacia abajo = (0,-1) . normal)
+      const cosI = -(nx * 0 + ny * (-1));  // dot product con (0,-1)
+      const sinI2 = 1 - cosI * cosI;
+      const ratio = n1 / n2;
+      const sinT2 = ratio * ratio * sinI2;
+      if (sinT2 >= 1) return { x: 0, y: 0 }; // reflexion total interna
+      const cosT = Math.sqrt(1 - sinT2);
+      // Rayo refractado
+      const rx = ratio * 0    + (ratio * cosI - cosT) * nx;
+      const ry = ratio * (-1) + (ratio * cosI - cosT) * ny;
+      return { x: rx, y: ry };
+    }
+
+    // Canvas para generar el displacement map
+    const canvas = document.createElement('canvas');
+    canvas.width  = SIZE;
+    canvas.height = SIZE;
+    const ctx = canvas.getContext('2d');
+    const img = ctx.createImageData(SIZE, SIZE);
+
+    const cx = SIZE / 2;
+    const cy = SIZE / 2;
+    const R  = SIZE / 2;
+
+    let maxDisp = 0;
+    const displacements = new Float32Array(SIZE * SIZE * 2);
+
+    for (let y = 0; y < SIZE; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        const dx = (x - cx) / R;
+        const dy = (y - cy) / R;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist >= 1.0) {
+          // Fuera del circulo — sin desplazamiento (neutro = 128)
+          displacements[(y * SIZE + x) * 2 + 0] = 0;
+          displacements[(y * SIZE + x) * 2 + 1] = 0;
+          continue;
+        }
+
+        const distFromEdge = 1.0 - dist;
+
+        if (distFromEdge > BEZEL) {
+          // Interior plano — sin refraccion
+          displacements[(y * SIZE + x) * 2 + 0] = 0;
+          displacements[(y * SIZE + x) * 2 + 1] = 0;
+          continue;
+        }
+
+        // En el bisel: calcular desplazamiento
+        const t = 1.0 - (distFromEdge / BEZEL);  // 0 en interior, 1 en borde
+        const h = surfaceHeight(t);
+        const dh = derivative(surfaceHeight, t);
+
+        // Normal a la superficie: perpendicular al gradiente de altura
+        // en direccion radial
+        const angle = Math.atan2(dy, dx);
+        const nx_surface = -dh * Math.cos(angle);
+        const ny_surface = -dh * Math.sin(angle);
+
+        const refracted = snellRefract(nx_surface, ny_surface, 1.0, IOR);
+
+        // El desplazamiento es la diferencia entre la direccion refractada y la original (0,-1)
+        const dispX = refracted.x - 0;
+        const dispY = refracted.y - (-1);
+
+        displacements[(y * SIZE + x) * 2 + 0] = dispX;
+        displacements[(y * SIZE + x) * 2 + 1] = dispY;
+
+        const mag = Math.sqrt(dispX * dispX + dispY * dispY);
+        if (mag > maxDisp) maxDisp = mag;
+      }
+    }
+
+    // Normalizar y codificar en imagen RGBA (R=X, G=Y, 128=neutro)
+    for (let i = 0; i < SIZE * SIZE; i++) {
+      const raw_x = displacements[i * 2 + 0];
+      const raw_y = displacements[i * 2 + 1];
+      const nx_norm = maxDisp > 0 ? raw_x / maxDisp : 0;
+      const ny_norm = maxDisp > 0 ? raw_y / maxDisp : 0;
+      const r = Math.round(128 + nx_norm * 127);
+      const g = Math.round(128 + ny_norm * 127);
+      img.data[i * 4 + 0] = Math.max(0, Math.min(255, r));
+      img.data[i * 4 + 1] = Math.max(0, Math.min(255, g));
+      img.data[i * 4 + 2] = 128;
+      img.data[i * 4 + 3] = 255;
+    }
+
+    ctx.putImageData(img, 0, 0);
+
+    // Aplicar al feImage del filtro SVG
+    const dataUrl = canvas.toDataURL('image/png');
+    const feImg = document.getElementById('ntizar-displacement-img');
+    if (feImg) {
+      feImg.setAttribute('href', dataUrl);
+      feImg.setAttribute('width',  SIZE);
+      feImg.setAttribute('height', SIZE);
+    }
+  })();
+  </script>
+
+  <!-- Fondo global: formas de color que se ven a traves del glass -->
+  <div class="bg-scene">
+    <!-- Manchas grandes de color — dan sustancia al backdrop-filter -->
+    <div style="position:absolute;width:700px;height:700px;top:-180px;left:-200px;
+         background:radial-gradient(circle, var(--blue-600) 0%, transparent 70%);
+         opacity:0.18; animation: ntizar-float 12s ease-in-out infinite;"></div>
+    <div style="position:absolute;width:500px;height:500px;top:20%;right:-150px;
+         background:radial-gradient(circle, var(--orange-500) 0%, transparent 70%);
+         opacity:0.15; animation: ntizar-float 10s ease-in-out infinite; animation-delay:-3s;"></div>
+    <div style="position:absolute;width:400px;height:400px;bottom:10%;left:15%;
+         background:radial-gradient(circle, #a855f7 0%, transparent 70%);
+         opacity:0.12; animation: ntizar-float 14s ease-in-out infinite; animation-delay:-6s;"></div>
+    <div style="position:absolute;width:350px;height:350px;bottom:30%;right:20%;
+         background:radial-gradient(circle, var(--blue-400) 0%, transparent 70%);
+         opacity:0.10; animation: ntizar-float 9s ease-in-out infinite; animation-delay:-1s;"></div>
+    <!-- Lineas de color tipo Apple demo -->
+    <div style="position:absolute;top:35%;left:0;right:0;height:3px;
+         background:linear-gradient(90deg, transparent 5%, var(--blue-500) 30%, var(--orange-500) 70%, transparent 95%);
+         opacity:0.15; transform:rotate(-1deg);"></div>
+    <div style="position:absolute;top:55%;left:5%;right:5%;height:2px;
+         background:linear-gradient(90deg, transparent, #a855f7, var(--blue-400), transparent);
+         opacity:0.12; transform:rotate(0.5deg);"></div>
+  </div>
+
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-float" style="max-width:1200px;margin:1.5rem auto;">
+    <a href="#" class="navbar-brand">
+      <span class="navbar-brand-dot"></span>
+      Ntizar DS
+    </a>
+    <ul class="navbar-nav">
+      <li><a href="#colores" class="nav-link active">Colores</a></li>
+      <li><a href="#glass" class="nav-link">Glass</a></li>
+      <li><a href="#buttons" class="nav-link">Botones</a></li>
+      <li><a href="#cards" class="nav-link">Cards</a></li>
+      <li><a href="#forms" class="nav-link">Formularios</a></li>
+      <li><a href="#more" class="nav-link">Mas</a></li>
+    </ul>
+    <div class="navbar-actions">
+      <span class="badge badge-glass no-dot">v1.0.0</span>
+      <button class="btn btn-primary btn-sm">Get Started</button>
+    </div>
+  </nav>
+
+
+  <div class="container" style="padding-top: 2rem; padding-bottom: 6rem;">
+
+    <!-- HERO -->
+    <section class="demo-section" style="border-bottom: none; padding-bottom: 2rem;">
+      <div class="flex flex-col gap-6" style="max-width: 680px;">
+        <div class="animate-fade-up">
+          <span class="badge badge-blue no-dot" style="margin-bottom: 1rem;">Design System</span>
+          <h1 class="hero-headline">
+            <span class="text-gradient">Ntizar</span><br>
+            Design System
+          </h1>
+        </div>
+        <p class="animate-fade-up delay-1" style="font-size: var(--text-lg); color: var(--text-secondary); max-width: 520px;">
+          Sistema de diseño con identidad propia. Azul y naranja. Liquid Glass.
+          Un CSS para construir proyectos con sello.
+        </p>
+        <div class="demo-row animate-fade-up delay-2">
+          <button class="btn btn-primary btn-lg">Empezar a usar</button>
+          <button class="btn btn-glass btn-lg">Ver documentacion</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- COLORES -->
+    <section class="demo-section" id="colores">
+      <div class="section-label">Identidad</div>
+      <h2 class="section-title">Paleta de Color</h2>
+      <p class="section-desc">
+        Azul como primario, naranja como acento. Las variables CSS completas estan disponibles
+        via <code class="code-tag">--blue-*</code> y <code class="code-tag">--orange-*</code>.
+      </p>
+
+      <!-- Azul -->
+      <h4 style="margin-bottom:1rem; font-size: var(--text-base);">Azul — Primario</h4>
+      <div class="color-grid" style="margin-bottom: 2rem;">
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--blue-50);"></div>
+          <span class="swatch-name">blue-50</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--blue-200);"></div>
+          <span class="swatch-name">blue-200</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--blue-300);"></div>
+          <span class="swatch-name">blue-300</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--blue-400);"></div>
+          <span class="swatch-name">blue-400</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--blue-500); box-shadow: 0 0 20px rgba(59,130,246,0.5);"></div>
+          <span class="swatch-name" style="color:var(--blue-300);">blue-500 *</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--blue-600);"></div>
+          <span class="swatch-name">blue-600</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--blue-700);"></div>
+          <span class="swatch-name">blue-700</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--blue-800);"></div>
+          <span class="swatch-name">blue-800</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--blue-900);"></div>
+          <span class="swatch-name">blue-900</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--blue-950);"></div>
+          <span class="swatch-name">blue-950</span>
+        </div>
+      </div>
+
+      <!-- Naranja -->
+      <h4 style="margin-bottom:1rem; font-size: var(--text-base);">Naranja — Acento</h4>
+      <div class="color-grid" style="margin-bottom: 2rem;">
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--orange-50);"></div>
+          <span class="swatch-name">orange-50</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--orange-200);"></div>
+          <span class="swatch-name">orange-200</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--orange-300);"></div>
+          <span class="swatch-name">orange-300</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--orange-400);"></div>
+          <span class="swatch-name">orange-400</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--orange-500); box-shadow: 0 0 20px rgba(249,115,22,0.5);"></div>
+          <span class="swatch-name" style="color:var(--orange-300);">orange-500 *</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--orange-600);"></div>
+          <span class="swatch-name">orange-600</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--orange-700);"></div>
+          <span class="swatch-name">orange-700</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--orange-800);"></div>
+          <span class="swatch-name">orange-800</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--orange-900);"></div>
+          <span class="swatch-name">orange-900</span>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background: var(--orange-950);"></div>
+          <span class="swatch-name">orange-950</span>
+        </div>
+      </div>
+
+      <!-- Gradientes de texto -->
+      <h4 style="margin-bottom:1rem; font-size: var(--text-base);">Texto Gradiente</h4>
+      <div class="demo-row" style="align-items: baseline;">
+        <span class="text-gradient" style="font-size: var(--text-3xl); font-weight: 700;">Ntizar</span>
+        <span class="text-gradient-blue" style="font-size: var(--text-3xl); font-weight: 700;">Azul</span>
+        <code class="class-chip">.text-gradient</code>
+        <code class="class-chip">.text-gradient-blue</code>
+      </div>
+    </section>
+
+
+    <!-- GLASS SYSTEM -->
+    <section class="demo-section" id="glass">
+      <div class="section-label">Core</div>
+      <h2 class="section-title">Liquid Glass</h2>
+      <p class="section-desc">
+        Tres niveles de intensidad, variantes de color y specular highlight.
+        En Chrome se aplica refraccion via SVG filter; en otros navegadores el
+        <code class="code-tag">backdrop-filter: blur</code> actua como fallback visible.
+      </p>
+
+      <div class="glass-preview">
+        <!-- Fondo colorido tipo Apple: formas saturadas visibles a traves del vidrio -->
+        <div class="glass-preview-bg">
+          <!-- Franja azul horizontal -->
+          <div style="position:absolute;top:15%;left:0;width:55%;height:22%;
+               background:linear-gradient(90deg, var(--blue-500), var(--blue-400));
+               border-radius:0 var(--radius-full) var(--radius-full) 0; opacity:0.85;"></div>
+          <!-- Blob naranja -->
+          <div style="position:absolute;top:10%;right:5%;width:160px;height:160px;
+               background:radial-gradient(circle, var(--orange-400) 30%, var(--orange-600) 100%);
+               border-radius:50%; opacity:0.9;"></div>
+          <!-- Blob azul-purpura -->
+          <div style="position:absolute;bottom:15%;left:8%;width:140px;height:140px;
+               background:radial-gradient(circle, #818cf8 20%, var(--blue-600) 100%);
+               border-radius:50%; opacity:0.85;"></div>
+          <!-- Franja rosa/gradiente -->
+          <div style="position:absolute;bottom:20%;right:0;width:50%;height:18%;
+               background:linear-gradient(90deg, #a855f7, #ec4899, var(--orange-400));
+               border-radius:var(--radius-full) 0 0 var(--radius-full); opacity:0.8;"></div>
+          <!-- Circulo verde -->
+          <div style="position:absolute;bottom:5%;left:35%;width:80px;height:80px;
+               background:radial-gradient(circle, #22c55e, #16a34a);
+               border-radius:50%; opacity:0.85;"></div>
+          <!-- Fondo base claro -->
+          <div style="position:absolute;inset:0;background:#e8edf8;z-index:-1;"></div>
+        </div>
+
+        <div class="demo-card-grid" style="position:relative; z-index:1;">
+          <!-- Subtle -->
+          <div class="glass-subtle glass-specular" style="padding: 1.5rem;">
+            <code class="class-chip" style="margin-bottom: 0.75rem; display: inline-block;">.glass-subtle</code>
+            <p class="card-title" style="margin-bottom: 0.5rem;">Nivel Subtle</p>
+            <p class="card-body">Fondo muy ligero. Para secciones, dividers, areas de bajo contraste.</p>
+          </div>
+
+          <!-- Standard -->
+          <div class="glass-standard glass-specular" style="padding: 1.5rem;">
+            <code class="class-chip" style="margin-bottom: 0.75rem; display: inline-block;">.glass-standard</code>
+            <p class="card-title" style="margin-bottom: 0.5rem;">Nivel Standard</p>
+            <p class="card-body">El nivel por defecto. Cards, paneles, drawers. Blur 16px + saturate.</p>
+          </div>
+
+          <!-- Intense -->
+          <div class="glass-intense glass-specular" style="padding: 1.5rem;">
+            <code class="class-chip" style="margin-bottom: 0.75rem; display: inline-block;">.glass-intense</code>
+            <p class="card-title" style="margin-bottom: 0.5rem;">Nivel Intense</p>
+            <p class="card-body">Para modales, heroes, elementos prominentes. Blur 28px maximo.</p>
+          </div>
+
+          <!-- Blue -->
+          <div class="glass-standard glass-blue glass-specular specular-blue" style="padding: 1.5rem;">
+            <code class="class-chip" style="margin-bottom: 0.75rem; display: inline-block;">.glass-blue</code>
+            <p class="card-title" style="margin-bottom: 0.5rem; color: var(--blue-300);">Tinte Azul</p>
+            <p class="card-body">Tinte azul para destacar elementos primarios o estados activos.</p>
+          </div>
+
+          <!-- Orange -->
+          <div class="glass-standard glass-orange glass-specular specular-orange" style="padding: 1.5rem;">
+            <code class="class-chip" style="margin-bottom: 0.75rem; display: inline-block;">.glass-orange</code>
+            <p class="card-title" style="margin-bottom: 0.5rem; color: var(--orange-300);">Tinte Naranja</p>
+            <p class="card-body">Tinte naranja para alertas, CTAs secundarios, notificaciones.</p>
+          </div>
+
+          <!-- Gradient border -->
+          <div class="card card-gradient-border glass-specular" style="background: rgba(255,255,255,0.04); padding: 1.5rem;">
+            <code class="class-chip" style="margin-bottom: 0.75rem; display: inline-block;">.card-gradient-border</code>
+            <p class="card-title" style="margin-bottom: 0.5rem;">Borde Gradiente</p>
+            <p class="card-body">Borde con gradiente azul-naranja via mask CSS. Sin SVG, sin JS.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- BUTTONS -->
+    <section class="demo-section" id="buttons">
+      <div class="section-label">Interaccion</div>
+      <h2 class="section-title">Botones</h2>
+      <p class="section-desc">
+        Todos los botones tienen specular highlight en hover, active scale y transiciones suaves.
+      </p>
+
+      <!-- Variantes -->
+      <h4 style="margin-bottom: 1rem; font-size: var(--text-sm); color: var(--text-muted);">VARIANTES</h4>
+      <div class="demo-row" style="margin-bottom: 2rem;">
+        <button class="btn btn-primary">Primario</button>
+        <button class="btn btn-accent">Acento</button>
+        <button class="btn btn-glass">Glass</button>
+        <button class="btn btn-glass-blue">Glass Azul</button>
+        <button class="btn btn-ghost">Ghost</button>
+      </div>
+
+      <!-- Tamaños -->
+      <h4 style="margin-bottom: 1rem; font-size: var(--text-sm); color: var(--text-muted);">TAMAÑOS</h4>
+      <div class="demo-row" style="margin-bottom: 2rem; align-items: center;">
+        <button class="btn btn-primary btn-sm">Small</button>
+        <button class="btn btn-primary">Base</button>
+        <button class="btn btn-primary btn-lg">Large</button>
+        <button class="btn btn-primary btn-xl">XL</button>
+      </div>
+
+      <!-- Iconos -->
+      <h4 style="margin-bottom: 1rem; font-size: var(--text-sm); color: var(--text-muted);">CON ICONOS</h4>
+      <div class="demo-row" style="margin-bottom: 2rem; align-items: center;">
+        <button class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Continuar
+        </button>
+        <button class="btn btn-accent">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          Programar
+        </button>
+        <button class="btn btn-glass">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Mensaje
+        </button>
+        <!-- Icon buttons -->
+        <button class="btn btn-primary btn-icon" data-tooltip="Accion principal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <button class="btn btn-glass btn-icon" data-tooltip="Ajustes">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 1 1 4.93 19.07 10 10 0 0 1 19.07 4.93Z"/></svg>
+        </button>
+      </div>
+
+      <!-- Disabled -->
+      <h4 style="margin-bottom: 1rem; font-size: var(--text-sm); color: var(--text-muted);">ESTADOS</h4>
+      <div class="demo-row">
+        <button class="btn btn-primary" disabled>Desactivado</button>
+        <button class="btn btn-accent animate-glow-orange">Glow activo</button>
+        <button class="btn btn-primary animate-glow-blue">Glow azul</button>
+      </div>
+    </section>
+
+
+    <!-- CARDS -->
+    <section class="demo-section" id="cards">
+      <div class="section-label">Contenido</div>
+      <h2 class="section-title">Cards</h2>
+      <p class="section-desc">
+        Cards con glass effect, bordes gradiente, acentos de color y hover animado.
+      </p>
+
+      <div class="demo-card-grid">
+        <!-- Card base -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Card Base</span>
+            <span class="badge badge-glass no-dot">Default</span>
+          </div>
+          <div class="card-body">
+            Card con fondo solido y borde sutil. Base para la mayoria de los casos.
+            Hover con translate y shadow.
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-ghost btn-sm">Cancelar</button>
+            <button class="btn btn-primary btn-sm">Confirmar</button>
+          </div>
+        </div>
+
+        <!-- Card glass -->
+        <div class="card card-glass glass-specular">
+          <div class="card-header">
+            <span class="card-title">Card Glass</span>
+            <span class="badge badge-blue no-dot">Glass</span>
+          </div>
+          <div class="card-body">
+            Glass effect completo. Usa <code class="code-tag">.card-glass .glass-specular</code>.
+            El highlight se anima en hover.
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-ghost btn-sm">Ver mas</button>
+            <button class="btn btn-glass-blue btn-sm">Accion</button>
+          </div>
+        </div>
+
+        <!-- Card gradient border -->
+        <div class="card card-gradient-border">
+          <div class="card-header">
+            <span class="card-title">Borde Gradiente</span>
+            <span class="badge badge-orange no-dot">Premium</span>
+          </div>
+          <div class="card-body">
+            Borde con gradiente azul-naranja implementado con <code class="code-tag">mask</code> CSS.
+            Sin imagenes, sin SVG externo.
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-accent btn-sm">Upgrade</button>
+          </div>
+        </div>
+
+        <!-- Card accent azul -->
+        <div class="card card-accent-blue">
+          <div style="display:flex; gap:1rem; align-items: flex-start; margin-bottom: 1rem;">
+            <div class="avatar avatar-md avatar-blue">N</div>
+            <div>
+              <p class="card-title">Card Acento Azul</p>
+              <small>Borde superior azul + glow</small>
+            </div>
+          </div>
+          <div class="card-body">
+            Para destacar funcionalidades primarias o elementos clave en el flujo.
+          </div>
+        </div>
+
+        <!-- Card accent naranja -->
+        <div class="card card-accent-orange">
+          <div style="display:flex; gap:1rem; align-items: flex-start; margin-bottom: 1rem;">
+            <div class="avatar avatar-md avatar-orange">!</div>
+            <div>
+              <p class="card-title">Card Acento Naranja</p>
+              <small>Alertas, notificaciones, CTAs</small>
+            </div>
+          </div>
+          <div class="card-body">
+            Usar para notificaciones importantes, onboarding, o llamadas a la accion urgentes.
+          </div>
+        </div>
+
+        <!-- Card con liquid morph decoration -->
+        <div class="card card-glass glass-specular" style="overflow: hidden;">
+          <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;
+               background:linear-gradient(135deg,var(--blue-500),var(--orange-500));
+               opacity:0.15; animation: ntizar-liquid-morph 8s ease-in-out infinite;
+               pointer-events:none;"></div>
+          <div class="card-header" style="position:relative;z-index:1;">
+            <span class="card-title">Con Liquid Morph</span>
+          </div>
+          <div class="card-body" style="position:relative;z-index:1;">
+            Decoracion animada con <code class="code-tag">.animate-liquid-morph</code>.
+            El shape de fondo muta organicamente entre formas.
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- BADGES Y AVATARES -->
+    <section class="demo-section" id="more">
+      <div class="section-label">Elementos</div>
+      <h2 class="section-title">Badges & Avatares</h2>
+
+      <h4 style="margin-bottom: 1rem; font-size: var(--text-sm); color: var(--text-muted);">BADGES</h4>
+      <div class="demo-row" style="margin-bottom: 2rem;">
+        <span class="badge badge-blue">Azul</span>
+        <span class="badge badge-orange">Naranja</span>
+        <span class="badge badge-glass">Glass</span>
+        <span class="badge badge-success">Exito</span>
+        <span class="badge badge-danger">Error</span>
+        <span class="badge badge-warning">Aviso</span>
+        <span class="badge badge-blue no-dot">Sin punto</span>
+      </div>
+
+      <h4 style="margin-bottom: 1rem; font-size: var(--text-sm); color: var(--text-muted);">AVATARES</h4>
+      <div class="demo-row" style="margin-bottom: 0; align-items: center;">
+        <div class="avatar avatar-sm avatar-blue">A</div>
+        <div class="avatar avatar-md avatar-blue">AB</div>
+        <div class="avatar avatar-lg avatar-orange">N</div>
+        <div class="avatar avatar-xl avatar-gradient">NT</div>
+        <div class="avatar avatar-lg" style="background: var(--glass-bg-standard); border: 1px solid var(--border-default); backdrop-filter: blur(8px);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- FORMULARIOS -->
+    <section class="demo-section" id="forms">
+      <div class="section-label">Input</div>
+      <h2 class="section-title">Formularios</h2>
+      <p class="section-desc">
+        Inputs con glass effect, focus ring azul/naranja, estados de error y variantes.
+      </p>
+
+      <div style="max-width: 480px; display: flex; flex-direction: column; gap: 1.25rem;">
+        <div class="input-group">
+          <label class="input-label">Email</label>
+          <div class="input-search-wrap">
+            <svg class="input-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+            <input type="email" class="input" placeholder="nombre@ejemplo.com">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Buscar</label>
+          <div class="input-search-wrap">
+            <svg class="input-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="search" class="input" placeholder="Buscar proyectos...">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Contrasena</label>
+          <input type="password" class="input" placeholder="••••••••">
+          <span class="input-hint">Minimo 8 caracteres.</span>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Campo con error</label>
+          <input type="text" class="input input-error" value="usuario invalido!">
+          <span class="input-hint error">Este nombre de usuario no esta disponible.</span>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Descripcion</label>
+          <textarea class="input textarea" placeholder="Escribe aqui..." rows="3"></textarea>
+        </div>
+
+        <div class="flex gap-3">
+          <button class="btn btn-ghost btn-sm">Cancelar</button>
+          <button class="btn btn-primary flex-1">Guardar cambios</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- PROGRESS BARS -->
+    <section class="demo-section">
+      <div class="section-label">Feedback</div>
+      <h2 class="section-title">Progress Bars</h2>
+
+      <div class="progress-list" style="max-width: 560px;">
+        <div>
+          <div class="progress-label">
+            <span>Proyecto Alpha</span>
+            <span class="text-blue">72%</span>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-bar" style="width: 72%;"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="progress-label">
+            <span>Deploy produccion</span>
+            <span class="text-orange">45%</span>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-bar orange" style="width: 45%;"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="progress-label">
+            <span>Sincronizacion</span>
+            <span class="text-gradient">88%</span>
+          </div>
+          <div class="progress-wrap lg">
+            <div class="progress-bar gradient" style="width: 88%;"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="progress-label">
+            <span>Cargando assets...</span>
+            <span>12%</span>
+          </div>
+          <div class="progress-wrap sm">
+            <div class="progress-bar" style="width: 12%;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- MODAL PREVIEW -->
+    <section class="demo-section">
+      <div class="section-label">Overlay</div>
+      <h2 class="section-title">Modal</h2>
+      <p class="section-desc">
+        Preview estatico del componente modal. En uso real, encapsular en
+        <code class="code-tag">.modal-overlay</code>.
+      </p>
+
+      <div class="modal-preview-wrap">
+        <div class="modal-preview-bg"></div>
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);"></div>
+        <div class="modal-preview-content">
+          <div class="modal" style="position:relative;animation:none;">
+            <button class="modal-close">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="modal-header">
+              <h3 class="modal-title">Confirmar accion</h3>
+            </div>
+            <div class="modal-body">
+              Esta accion es irreversible. El proyecto sera eliminado permanentemente
+              y no podra ser recuperado.
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-ghost btn-sm">Cancelar</button>
+              <button class="btn btn-accent btn-sm">Eliminar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- DIVIDERS -->
+    <section class="demo-section">
+      <div class="section-label">Separadores</div>
+      <h2 class="section-title">Dividers</h2>
+      <hr class="divider">
+      <p style="text-align:center;color:var(--text-muted);font-size:var(--text-xs);font-family:var(--font-mono);">.divider</p>
+      <hr class="divider-gradient" style="margin-top: 1.5rem;">
+      <p style="text-align:center;color:var(--text-muted);font-size:var(--text-xs);font-family:var(--font-mono);margin-top:0.5rem;">.divider-gradient</p>
+    </section>
+
+
+    <!-- ANIMACIONES -->
+    <section class="demo-section">
+      <div class="section-label">Movimiento</div>
+      <h2 class="section-title">Animaciones</h2>
+      <p class="section-desc">
+        Clases de animacion reutilizables. Todas respetan
+        <code class="code-tag">prefers-reduced-motion</code>.
+      </p>
+
+      <div class="demo-row" style="align-items: center; flex-wrap: wrap; gap: 2rem;">
+        <div style="text-align:center;display:flex;flex-direction:column;gap:0.5rem;align-items:center;">
+          <div class="animate-float" style="width:60px;height:60px;background:linear-gradient(135deg,var(--blue-500),var(--blue-700));border-radius:var(--radius-xl);"></div>
+          <code class="class-chip">.animate-float</code>
+        </div>
+
+        <div style="text-align:center;display:flex;flex-direction:column;gap:0.5rem;align-items:center;">
+          <div class="animate-glow-blue" style="width:60px;height:60px;background:var(--blue-600);border-radius:var(--radius-xl);"></div>
+          <code class="class-chip">.animate-glow-blue</code>
+        </div>
+
+        <div style="text-align:center;display:flex;flex-direction:column;gap:0.5rem;align-items:center;">
+          <div class="animate-glow-orange" style="width:60px;height:60px;background:var(--orange-600);border-radius:var(--radius-xl);"></div>
+          <code class="class-chip">.animate-glow-orange</code>
+        </div>
+
+        <div style="text-align:center;display:flex;flex-direction:column;gap:0.5rem;align-items:center;">
+          <div class="animate-liquid-morph" style="width:60px;height:60px;background:linear-gradient(135deg,var(--blue-500),var(--orange-500));"></div>
+          <code class="class-chip">.animate-liquid-morph</code>
+        </div>
+
+        <div style="text-align:center;display:flex;flex-direction:column;gap:0.5rem;align-items:center;">
+          <div style="width:120px;">
+            <div class="progress-wrap sm" style="margin-bottom:0.5rem;">
+              <div class="progress-bar" style="width:60%;"></div>
+            </div>
+          </div>
+          <code class="class-chip">progress shimmer</code>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- TOOLTIPS -->
+    <section class="demo-section">
+      <div class="section-label">UX</div>
+      <h2 class="section-title">Tooltips</h2>
+      <p class="section-desc">
+        Via atributo <code class="code-tag">data-tooltip="texto"</code>. CSS puro, sin JS.
+      </p>
+
+      <div class="demo-row">
+        <button class="btn btn-primary" data-tooltip="Crear nuevo proyecto">Crear proyecto</button>
+        <button class="btn btn-glass" data-tooltip="Ver todas las opciones disponibles">Ver opciones</button>
+        <span class="badge badge-orange" data-tooltip="3 notificaciones sin leer">Notificaciones</span>
+      </div>
+    </section>
+
+
+    <!-- USO / COMO IMPORTAR -->
+    <section class="demo-section">
+      <div class="section-label">Integracion</div>
+      <h2 class="section-title">Como usar</h2>
+      <p class="section-desc">
+        Copia o importa el CSS. Las variables hacen que todo sea sobreescribible por proyecto.
+      </p>
+
+      <div class="card card-glass" style="padding: 1.5rem;">
+        <div class="card-header">
+          <span class="card-title" style="font-size: var(--text-base);">HTML</span>
+        </div>
+        <pre style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--blue-300);overflow:auto;line-height:1.8;"><code>&lt;link rel="stylesheet" href="ntizar.css"&gt;
+
+&lt;!-- SVG filters (pegar antes de &lt;/body&gt;) --&gt;
+&lt;svg class="ntizar-svg-filters"&gt;
+  &lt;defs&gt;
+    &lt;filter id="ntizar-glass-filter"&gt;...&lt;/filter&gt;
+  &lt;/defs&gt;
+&lt;/svg&gt;
+
+&lt;!-- Uso --&gt;
+&lt;div class="glass-standard glass-specular"&gt;
+  Contenido con liquid glass
+&lt;/div&gt;
+
+&lt;button class="btn btn-primary"&gt;CTA&lt;/button&gt;</code></pre>
+      </div>
+
+      <div class="card card-glass" style="padding: 1.5rem; margin-top: 1rem;">
+        <div class="card-header">
+          <span class="card-title" style="font-size: var(--text-base);">Sobreescribir variables por proyecto</span>
+        </div>
+        <pre style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--orange-300);overflow:auto;line-height:1.8;"><code>/* En tu proyecto, despues de importar ntizar.css */
+:root {
+  /* Cambiar solo lo que necesites */
+  --blue-500: #6366f1;       /* morado en lugar de azul */
+  --orange-500: #ec4899;     /* rosa en lugar de naranja */
+  --radius-lg: 8px;          /* bordes mas cuadrados */
+  --glass-blur-md: blur(8px);/* menos blur */
+}</code></pre>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer -->
+  <footer style="position:relative;z-index:1;border-top:1px solid var(--border-subtle);padding:2rem 0;margin-top:2rem;">
+    <div class="container flex justify-between items-center flex-wrap gap-4">
+      <div class="flex items-center gap-3">
+        <span class="navbar-brand-dot"></span>
+        <span style="font-weight:var(--font-semi);color:var(--text-primary);">Ntizar Design System</span>
+        <span class="badge badge-glass no-dot">v1.0.0</span>
+      </div>
+      <div class="flex gap-3">
+        <span class="text-muted" style="font-size:var(--text-xs);">Azul × Naranja × Liquid Glass</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
