@@ -4,6 +4,9 @@
 
 Este repositorio es la **versión pública y clonable**: explica cómo funciona el sistema y te da todo lo necesario para montar el tuyo. No es un framework — es una arquitectura, un conjunto de scripts y unas convenciones que llevan meses funcionando a diario.
 
+> 🔗 **Landing explicativa:** https://ntizar.github.io/MasterMindPublic/
+> 📖 **Guía paso a paso:** [docs/GUIA-COMPLETA.md](docs/GUIA-COMPLETA.md)
+
 > Hecho con ❤️ por David Antizar
 
 ---
