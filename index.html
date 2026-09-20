@@ -27,10 +27,6 @@
   /* Tactil: el boton --sm del sistema mide 36; en movil todo lo pulsable llega a 44 (base mobile-first). */
   .nz-btn, .nz-navbar__link, .nz-menu__item { min-height: 44px; display: inline-flex; align-items: center; }
   .nz-menu__item { display: flex; }
-  /* BUG del sistema (Aurora 7): .nz-navbar__links declara display:flex en p2, que se carga DESPUES de p1,
-     asi que pisa a .nz-hide-movil (misma especificidad, gana el ultimo fichero). Se refuerza aqui. */
-  .nz-navbar__links.nz-hide-movil { display: none; }
-  @media (min-width: 640px) { .nz-navbar__links.nz-hide-movil { display: flex; } }
   @media (min-width: 860px) { .mm-hero__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
 </style>
 </head>
