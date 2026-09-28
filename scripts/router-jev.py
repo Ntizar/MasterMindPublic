@@ -80,10 +80,14 @@ def simple_similarity(query, text):
 
 
 def has_chromadb():
-    """Comprueba si ChromaDB existe y tiene datos."""
+    """Comprueba si ChromaDB existe, tiene datos Y hay API key para embeddings."""
     import shutil
     py = shutil.which("python") or shutil.which("python3")
     if not py:
+        return False
+    # Necesitamos API key para generar embeddings; sin ella ChromaDB no sirve
+    key = env_key("OPENAI_API_KEY")
+    if not key:
         return False
     try:
         import chromadb
@@ -95,7 +99,7 @@ def has_chromadb():
 
 
 def chromadb_query(query, k=5):
-    """Consulta ChromaDB con embeddings reales."""
+    """Consulta ChromaDB con embeddings reales. Devuelve lista o None si falla."""
     try:
         import chromadb
         client = chromadb.PersistentClient(path=str(DB_PATH))
@@ -105,6 +109,7 @@ def chromadb_query(query, k=5):
         base = env_key("OPENAI_BASE_URL").rstrip("/")
         key = env_key("OPENAI_API_KEY")
         import urllib.request
+        import urllib.error
         req = urllib.request.Request(
             f"{base}/embeddings",
             data=json.dumps({"model": EMBED_MODEL, "input": [query]}).encode(),
