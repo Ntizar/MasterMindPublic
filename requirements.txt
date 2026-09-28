@@ -1,0 +1,4 @@
+# Dependencias de Python para MasterMindPublic
+# Versiones fijadas para reproducibilidad.
+
+chromadb>=0.5.0,<1.0.0

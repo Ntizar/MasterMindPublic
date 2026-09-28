@@ -1,18 +1,25 @@
 #!/usr/bin/env python3
 """
 Explorador de Stars de GitHub — Mastermind Stars Explorer
-Fetch repos from user's stars, extract key info, and prepare for skill generation.
 
-Output: JSON to stdout with batch of repos to analyze.
-The agent then reads this output and creates skills from interesting patterns.
+Recupera repositorios marcados con ⭐ y registra información
+estructurada para que el agente la analice.
 
-Usage:
-  python3 explorar-stars.py                    # Process next batch (default 3)
-  python3 explorar-stars.py --batch 5          # Process 5 repos
-  python3 explorar-stars.py --all              # Process ALL unprocessed stars
-  python3 explorar-stars.py --include-own      # Include own repos too
-  python3 explorar-stars.py --status           # Show registry stats
-  python3 explorar-stars.py --reprocess REPO   # Force reprocess a specific repo
+NOTA — "aprendizaje" no es automático: este script solo registra candidatos.
+Cualquier skill nuevo debe ser destilado, revisado y aprobado por el agente
+(orquestador) de forma manual. Queda por implementar:
+  1. [ ] Destilación automática: leer README/archivos clave y generar
+         un borrador de SKILL.md en cuarentena (agent/skills/_quarantine/).
+  2. [ ] Revisión humana: el agente verifica el borrador y lo promociona.
+  3. [ ] Reindexación automática al promocionar un skill.
+
+Uso:
+  python3 explorar-stars.py                    # Procesar siguiente batch (3 por defecto)
+  python3 explorar-stars.py --batch 5          # Procesar 5 repos
+  python3 explorar-stars.py --all              # Procesar TODOS los stars sin procesar
+  python3 explorar-stars.py --include-own      # Incluir tus repos propios también
+  python3 explorar-stars.py --status           # Mostrar estado del registro
+  python3 explorar-stars.py --reproceso REPO   # Forzar reprocesar un repositorio concreto
 """
 
 import json

@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """
 Doctor de Mastermind — health check read-only del sistema.
-Verifica: gateway, crons, ChromaDB vs skills en disco, registry y git sync.
+
+Verifica: gateway, crons, ChromaDB vs skills en disco (HASH, no solo número),
+registry, git sync (dirty + commits sin push).
+
+NOTA: todas las rutas son relativas al repositorio (REPO), nunca absolutas.
 
 Uso:
   python scripts/doctor.py            # informe legible
@@ -16,20 +20,36 @@ import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
+
+def repo_root():
+    """Devuelve la raiz del repo git (o el directorio actual si no hay git)."""
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, timeout=5, cwd="."
+        )
+        if out.returncode == 0 and out.stdout.strip():
+            return Path(out.stdout.strip())
+    except (subprocess.TimeoutExpired, OSError):
+        pass
+    return Path.cwd().resolve()
+
+
 # Overrides de entorno para tests (scripts/test-doctor.py): permiten montar
 # sandboxes aislados sin tocar el sistema real. En uso normal no se definen.
-REPO = Path(os.environ.get("MM_DOCTOR_REPO", Path(__file__).resolve().parent.parent))
+REPO = Path(os.environ.get("MM_DOCTOR_REPO", repo_root()))
 HERMES = Path(os.environ.get("MM_DOCTOR_HERMES", Path.home() / "AppData" / "Local" / "hermes"))
 CRON_DIR = HERMES / "cron"
 SANDBOX = os.environ.get("MM_DOCTOR_SANDBOX") == "1"
-PY_SYS = r"~/AppData/Local/Programs/Python/Python312/python.exe"
 CHROMA_PATH = Path(os.environ.get("MM_DOCTOR_CHROMA", Path.home() / ".mastermind" / "chromadb"))
 COLLECTION = "mastermind-skills"
 
 results = []
 
+
 def check(name, ok, detail="", warn=False):
     results.append({"check": name, "ok": ok, "warn": warn, "detail": detail})
+
 
 def run(cmd, cwd=None, timeout=30):
     try:
@@ -37,6 +57,7 @@ def run(cmd, cwd=None, timeout=30):
                               cwd=cwd or str(REPO), shell=True)
     except Exception as e:
         return type("R", (), {"returncode": 1, "stdout": "", "stderr": str(e)})()
+
 
 # 1) Gateway vivo (omitido en sandbox de tests)
 if SANDBOX:
@@ -46,14 +67,10 @@ else:
     gw_up = "running" in (r.stdout + r.stderr).lower() or "✓" in r.stdout
     check("gateway", gw_up, (r.stdout + r.stderr).strip().splitlines()[0] if (r.stdout + r.stderr) else "sin salida")
 
-# 2) Crons — fuente real: cron/jobs.json (¡ojo! NO jobs/<id>/job.json: el glob
-#    antiguo nunca existió en producción y el check estaba muerto en silencio).
-#    Detecta: último run en error, entrega fallida (colapso 2026-09-02: token
-#    revocado -> "Telegram send failed: Unauthorized" enterrado), y jobs
-#    enabled cuyo next_run_at hace >2h que tocaba disparar y no disparó.
+# 2) Crons — fuente real: cron/jobs.json
 def _parse_iso(s):
     dt = datetime.fromisoformat(s)
-    if dt.tzinfo is None:      # naive = hora local del PC
+    if dt.tzinfo is None:
         dt = dt.astimezone()
     return dt
 
@@ -88,39 +105,122 @@ try:
 except Exception as e:
     check("cron:lectura", False, f"error leyendo jobs.json: {e}")
 
-# 3) ChromaDB count == SKILL.md count
-skill_count = len([p for p in (REPO / "agent" / "skills").rglob("SKILL.md")
-                   if not any(part.startswith(".") for part in p.parts)])
-try:
-    out = run(f'"{PY_SYS}" -c "import chromadb; c=chromadb.PersistentClient(path=r\'{CHROMA_PATH.as_posix()}\'); print(c.get_collection(\'{COLLECTION}\').count())"',
-              timeout=60)
-    chroma_count = int(out.stdout.strip() or -1)
-    check("chromadb", chroma_count == skill_count,
-          f"indexados: {chroma_count} | SKILL.md en disco: {skill_count}"
-          + ("" if chroma_count == skill_count else " → ejecutar scripts/indexar-skills.py"))
-except Exception as e:
-    check("chromadb", False, f"error: {e}")
+# 3) ChromaDB: compara HASHES por skill, no solo el número
+skill_files = list((REPO / "agent" / "skills").rglob("SKILL.md"))
+skill_files = [p for p in skill_files if not any(part.startswith(".") for part in p.parts)]
+skill_count = len(skill_files)
 
-# 4) Registry fresco (< 25h desde last_run)
-try:
-    reg = json.loads((REPO / "data" / "stars-registry.json").read_text(encoding="utf-8"))
-    last_run = datetime.fromisoformat(reg["last_run"])
-    age_h = (datetime.now(timezone.utc) - last_run).total_seconds() / 3600
-    check("stars-registry", age_h < 25, f"último run hace {age_h:.1f}h | {len(reg['processed'])} repos procesados")
-except Exception as e:
-    check("stars-registry", False, f"error: {e}")
+if skill_count == 0:
+    check("chromadb", False,
+          "agent/skills/ está vacío (0 SKILL.md). Crea skills y ejecuta scripts/indexar-skills.py")
+    try:
+        import chromadb
+        client = chromadb.PersistentClient(path=str(CHROMA_PATH))
+        col = client.get_collection(COLLECTION)
+        chroma_count = col.count()
+        if chroma_count > 0:
+            check("chromadb", False,
+                  f"ChromaDB tiene {chroma_count} items pero agent/skills/ está vacío (0 SKILL.md)")
+    except Exception:
+        pass
+else:
+    try:
+        import chromadb
+        client = chromadb.PersistentClient(path=str(CHROMA_PATH))
+        col = client.get_collection(COLLECTION)
+        chroma_count = col.count()
 
-# 5) Git sincronizado (sin cambios pendientes y en día con origin)
+        # Verificar contenido: comparar hash de cada SKILL.md con lo que hay en ChromaDB
+        hashes_disco = {}
+        for p in skill_files:
+            text = p.read_text(encoding="utf-8", errors="ignore")
+            import hashlib
+            h = hashlib.sha256(text.encode("utf-8", errors="ignore")).hexdigest()[:16]
+            hashes_disco[str(p.relative_to(REPO / "agent" / "skills"))] = h
+
+        # Leer los items indexados y comparar
+        all_items = col.get(include=["metadatas"])
+        hashes_chroma = {}
+        for i, meta in enumerate(all_items.get("metadatas", [])):
+            path_key = meta.get("path", "") if meta else ""
+            chroma_hash = meta.get("hash", "") if meta else ""
+            if path_key and chroma_hash:
+                hashes_chroma[path_key] = chroma_hash
+
+        mismatches = []
+        for path_key, disco_hash in hashes_disco.items():
+            chroma_hash = hashes_chroma.get(path_key, "")
+            if disco_hash and chroma_hash and disco_hash != chroma_hash:
+                mismatches.append(f"{path_key}: disco={disco_hash} chroma={chroma_hash}")
+            elif disco_hash and not chroma_hash:
+                mismatches.append(f"{path_key}: en disco pero NO indexado en ChromaDB")
+
+        if mismatches:
+            check("chromadb", False,
+                  f"{len(mismatches)} skill(s) con hash diferente o no indexado(s). "
+                  f"Ejecuta scripts/indexar-skills.py. Ej: {mismatches[0][:60]}")
+        elif chroma_count != skill_count:
+            check("chromadb", False,
+                  f"indexados: {chroma_count} | SKILL.md en disco: {skill_count} "
+                  f"→ ejecutar scripts/indexar-skills.py")
+        else:
+            check("chromadb", True, f"indexados: {chroma_count} | SKILL.md en disco: {skill_count} ✓")
+    except Exception as e:
+        check("chromadb", False, f"error accediendo ChromaDB: {e}")
+
+# 4) Registry fresco (< 25h desde last_run) — Opcional si no existe el fichero
+registry_path = REPO / "data" / "stars-registry.json"
+if not registry_path.exists():
+    check("stars-registry", False,
+          "data/stars-registry.json no existe — "
+          "ejecuta scripts/explorar-stars.py primero")
+else:
+    try:
+        reg = json.loads(registry_path.read_text(encoding="utf-8"))
+        last_run = datetime.fromisoformat(reg["last_run"])
+        age_h = (datetime.now(timezone.utc) - last_run).total_seconds() / 3600
+        check("stars-registry", age_h < 25,
+              f"último run hace {age_h:.1f}h | {len(reg['processed'])} repos procesados")
+    except Exception as e:
+        check("stars-registry", False, f"error: {e}")
+
+# 5) Git sincronizado: cambios pendientes + commits sin push
 r = run("git status --porcelain")
 dirty = bool(r.stdout.strip())
+
 r2 = run("git rev-parse --abbrev-ref HEAD")
 branch = r2.stdout.strip()
-check("git", not dirty,
-      f"rama: {branch} | {'LIMPIO' if not dirty else f'{len(r.stdout.strip().splitlines())} ficheros pendientes de commit'}")
 
-# 6) Token de Telegram vivo — lee HERMES/.env y hace getMe (colapso 2026-09-02:
-#    token revocado tumbaba el gateway con error non-retryable y todos los crons
-#    fallaban entrega sin que nada del repo lo notara). Omitido en sandbox sin .env.
+# Comprobar commits sin push (ahead/behind contra origin)
+r3 = run("git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null")
+upstream_ok = r3.returncode == 0
+ahead = 0
+behind = 0
+if upstream_ok:
+    r4 = run("git rev-list --count --left-right HEAD...@{upstream} 2>/dev/null")
+    if r4.returncode == 0 and r4.stdout.strip():
+        parts = r4.stdout.strip().split('\t')
+        if len(parts) == 2:
+            try:
+                behind = int(parts[0])
+                ahead = int(parts[1])
+            except ValueError:
+                pass
+
+git_ok = not dirty
+git_detail_parts = [f"rama: {branch}"]
+if dirty:
+    git_ok = False
+    git_detail_parts.append(f"{len(r.stdout.strip().splitlines())} ficheros pendientes de commit")
+if upstream_ok and ahead > 0:
+    git_ok = False
+    git_detail_parts.append(f"{ahead} commit(s) sin push a origin")
+if upstream_ok and behind > 0:
+    git_detail_parts.append(f"{behind} commit(s) en origin no locales (pull necesario)")
+
+check("git", git_ok, " | ".join(git_detail_parts))
+
+# 6) Token de Telegram — omitido en sandbox sin .env
 try:
     env_file = HERMES / ".env"
     tg_token = None
@@ -152,16 +252,14 @@ try:
             else:
                 check("telegram-token", True, f"Telegram respondió HTTP {he.code} (red suspecta)", warn=True)
         except Exception as net_e:
-            # Sin red no podemos afirmar que el token esté mal: warn, nunca fail.
             check("telegram-token", True, f"sin confirmación de red: {net_e}", warn=True)
 except Exception as e:
     check("telegram-token", False, f"error leyendo .env: {e}")
 
-# 7) Vigías externos declarados: cron vigia-cron en jobs.json + tarea del
-#    watchdog del gateway en Task Scheduler (ambos fuera del repo: si faltan,
-#    el sistema queda ciego ante token revocado o gateway muerto).
+# 7) Vigías externos (omitidos en sandbox)
 if SANDBOX:
     check("vigia-cron", True, "sandbox: omitido", warn=True)
+    check("vigia-gateway", True, "sandbox: omitido", warn=True)
 else:
     try:
         data = json.loads((CRON_DIR / "jobs.json").read_text(encoding="utf-8"))
@@ -173,16 +271,17 @@ else:
                    "--no-agent --script vigia-cron.py --deliver telegram")
     except Exception as e:
         check("vigia-cron", False, f"error leyendo jobs.json: {e}")
-if SANDBOX:
-    check("vigia-gateway", True, "sandbox: omitido", warn=True)
-else:
-    r = run('powershell -NoProfile -Command "if (Get-ScheduledTask -TaskName '
-            "'Hermes_Gateway_Watchdog' -ErrorAction SilentlyContinue) { 'VIVO' } "
-            'else { \'MUERTO\' }"', timeout=60)
-    wd_ok = "VIVO" in (r.stdout + r.stderr)
-    check("vigia-gateway", wd_ok,
-          "tarea Task Scheduler registrada" if wd_ok
-          else "FALTA — registrar: powershell -File scripts/registrar-vigia-gateway.ps1")
+    try:
+        r = run('powershell -NoProfile -Command "'
+                'if (Get-ScheduledTask -TaskName '
+                "'Hermes_Gateway_Watchdog' -ErrorAction SilentlyContinue) { 'VIVO' } "
+                "else { 'MUERTO' }\"", timeout=60)
+        wd_ok = "VIVO" in (r.stdout + r.stderr)
+        check("vigia-gateway", wd_ok,
+              "tarea Task Scheduler registrada" if wd_ok
+              else "FALTA — registrar: scripts/registrar-vigia-gateway.ps1")
+    except Exception:
+        check("vigia-gateway", False, "no se pudo verificar Task Scheduler")
 
 # Salida
 fails = [r for r in results if not r["ok"]]

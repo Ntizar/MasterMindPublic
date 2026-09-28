@@ -21,7 +21,27 @@ import sys
 import tempfile
 from pathlib import Path
 
-PY_SYS = r"~/AppData/Local/Programs/Python/Python312/python.exe"
+# Find Python from environment, never hardcode paths
+def find_python():
+    """Find a working Python interpreter."""
+    for candidate in [
+        os.environ.get("PYTHON", ""),
+        os.environ.get("python", ""),
+    ]:
+        if candidate and shutil.which(candidate):
+            return candidate
+    for name in ["python3", "python", "py"]:
+        full = shutil.which(name)
+        if full:
+            return full
+    return None
+
+
+PY_SYS = find_python()
+if not PY_SYS:
+    print("❌ ERROR: No se encontró Python en PATH. Instala Python 3.11+.", file=sys.stderr)
+    sys.exit(1)
+
 DOCTOR = Path(__file__).resolve().parent / "doctor.py"
 BASE = Path(tempfile.gettempdir()) / "mastermind-test-doctor"
 
