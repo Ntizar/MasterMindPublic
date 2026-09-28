@@ -150,15 +150,20 @@ def main() -> int:
 
     # ── Determinar modo ──────────────────────────────────────────
     chromadb_ok = has_chromadb()
-    mode = "REAL (ChromaDB + embeddings)" if chromadb_ok else "DEMO (tokens sobre SKILL.md)"
 
-    # ── Consultar ────────────────────────────────────────────────
+    # ── Consultar ChromaDB ───────────────────────────────────────
     if chromadb_ok:
         print("ℹ️  ChromaDB activo — usando embeddings reales.")
         skills = chromadb_query(args.consulta, args.k)
+        if skills is None:
+            print("ℹ️  ChromaDB query fallida — usando similaridad de tokens (DEMO).")
+            chromadb_ok = False
     else:
-        # Modo demo: similaridad de tokens sobre todos los SKILL.md
         print("ℹ️  ChromaDB no disponible — usando similaridad de tokens (DEMO).")
+        skills = None
+
+    # ── Fallback a demo ──────────────────────────────────────────
+    if skills is None:
         skills_data = []
         for md in sorted((REPO / "agent" / "skills").rglob("SKILL.md")):
             if any(part.startswith(".") for part in md.parts):
@@ -173,6 +178,7 @@ def main() -> int:
             skills_data.append({"name": name, "path": rel, "score": round(score, 4)})
         skills = sorted(skills_data, key=lambda s: s["score"], reverse=True)
 
+    # ── Decidir ruta ─────────────────────────────────────────────
     top = skills[0]["score"] if skills else 0.0
 
     if top >= args.alta:
@@ -187,12 +193,14 @@ def main() -> int:
                 "aun. Quedan por desarrollar: lectura ChromaDB, generacion "
                 "de embeddings, invocacion Jev y ejecucion del handler.")
 
+    modo_label = "REAL (ChromaDB + embeddings)" if chromadb_ok else "DEMO (tokens sobre SKILL.md)"
+
     out = {
         "consulta": args.consulta,
         "decision": decision,
         "ruta": ruta,
         "confianza_top": top,
-        "modo": mode,
+        "modo": modo_label,
         "umbral_alta": args.alta,
         "umbral_media": args.media,
         "cabeza_jev": f"{jev_note} (JEV_API_KEY={'configurada' if jev_status else 'no-configurada'})",
@@ -203,7 +211,7 @@ def main() -> int:
     print(json.dumps(out, ensure_ascii=False, indent=2) if args.json else
           f"\n{top:>6.2f} [{decision.upper():<7}] {args.consulta}\n        {ruta}\n        " +
           "\n        ".join(f"{s['score']:.2f} {s['name']} ({s.get('path', '?')})" for s in skills) +
-          f"\n\nModo: {mode}\n{jev_note}")
+          f"\n\nModo: {modo_label}\n{jev_note}")
     return 0
 
 
