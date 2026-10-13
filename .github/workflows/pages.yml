@@ -28,7 +28,7 @@ jobs:
           set -euo pipefail
           mkdir -p _site
           cp index.html _site/
-          for d in assets design-system; do
+          for d in assets design-system sistema; do
             [ -d "$d" ] && cp -r "$d" _site/ || true
           done
       - uses: actions/upload-pages-artifact@v4
