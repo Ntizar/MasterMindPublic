@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es" data-nz-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MasterMind — cómo funciona, cómo se usa desde el móvil y qué seguridad tiene</title>
+<meta name="description" content="Guía del sistema MasterMind: un orquestador que vive en un servidor 24/7, especialistas por dominio que se buscan por significado, el móvil como única puerta de entrada y las defensas que lo protegen.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Aurora@v8.4.2/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Aurora@v8.4.2/packs/p1-layout.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Aurora@v8.4.2/packs/p2-navigation.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Aurora@v8.4.2/packs/p3-typography.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Aurora@v8.4.2/packs/p4-actions.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Aurora@v8.4.2/packs/p6-feedback.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Aurora@v8.4.2/packs/p8-data.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Aurora@v8.4.2/packs/p9-media.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Aurora@v8.4.2/packs/p11-social.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ntizar/Aurora@v8.4.2/packs/p12-system.css">
+<style>
+  /* Shell mínimo: solo el ritmo vertical y la rejilla del hero, que el sistema no cubre. */
+  .mm-hero { padding-block: var(--nz-space-8) var(--nz-space-10); }
+  .mm-sec { padding-block: var(--nz-space-10); }
+  .mm-lead { max-width: 48rem; }
+  .mm-code { overflow-x: auto; }
+  .mm-hero__grid { display: grid; gap: var(--nz-space-8); align-items: center; }
+  .mm-hero__grid > *, .nz-thirds > *, .nz-dash-grid > *, .nz-article > * { min-width: 0; }
+  /* Táctil 44px en todo lo que se pulsa (el botón --sm del sistema mide 36). */
+  .nz-btn, .nz-navbar__link, .nz-menu__item, .nz-cta { min-height: 44px; display: inline-flex; align-items: center; }
+  .nz-menu__item { display: flex; }
+  @media (min-width: 860px) { .mm-hero__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
+</style>
+</head>
+<body class="nz">
+<a class="nz-skip-link" href="#contenido">Saltar al contenido</a>
+
+<header class="nz-navbar nz-navbar--bordered nz-sticky-top">
+  <span class="nz-navbar__brand"><i></i>MasterMind</span>
+  <span class="nz-navbar__links nz-hide-movil">
+    <a class="nz-navbar__link" href="#como-funciona">Cómo funciona</a>
+    <a class="nz-navbar__link" href="#movil">Desde el móvil</a>
+    <a class="nz-navbar__link" href="#seguridad">Seguridad</a>
+    <a class="nz-navbar__link" href="#replicar">Replicarlo</a>
+  </span>
+  <span class="nz-show-movil">
+    <span class="nz-menu">
+      <input class="nz-vh" type="checkbox" id="mm-menu" aria-label="Abrir menú">
+      <label class="nz-menu__btn" for="mm-menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span class="nz-vh">Abrir menú</span></label>
+      <span class="nz-menu__drop">
+        <a class="nz-menu__item" href="#como-funciona">Cómo funciona</a>
+        <a class="nz-menu__item" href="#movil">Desde el móvil</a>
+        <a class="nz-menu__item" href="#seguridad">Seguridad</a>
+        <a class="nz-menu__item" href="#replicar">Replicarlo</a>
+      </span>
+    </span>
+  </span>
+  <a class="nz-btn nz-btn--primary nz-btn--sm" href="https://github.com/Ntizar/MasterMindPublic" target="_blank" rel="noopener">GitHub</a>
+</header>
+
+<main id="contenido">
+
+<section class="mm-hero" aria-labelledby="titulo">
+  <div class="nz-container">
+    <div class="mm-hero__grid">
+      <div class="nz-stack nz-stack--lg">
+        <p class="nz-eyebrow">Guía del sistema · <span class="nz-badge nz-badge--accent">Datos de hoy</span></p>
+        <h1 class="nz-display" id="titulo">Un orquestador <span class="nz-h1--brand">siempre encendido</span>. El móvil, la puerta.</h1>
+        <p class="nz-lead mm-lead">MasterMind no vive en un portátil: vive en un servidor que no se apaga. Tú escribes una orden desde el móvil; el sistema busca el conocimiento adecuado, decide cuánto trabajo hace falta, lo ejecuta, lo verifica y aprende algo para la próxima vez. Aquí está entero: cómo funciona, cómo se usa desde el móvil y qué lo protege.</p>
+        <div class="nz-cluster">
+          <a class="nz-btn nz-btn--primary nz-btn--lg" href="#como-funciona">Cómo funciona</a>
+          <a class="nz-btn nz-btn--ghost nz-btn--lg" href="#seguridad">Qué seguridad tiene</a>
+        </div>
+      </div>
+      <div class="nz-stack">
+        <div class="nz-kpi">
+          <span class="nz-kpi__label">Disponibilidad</span>
+          <span class="nz-kpi__value nz-kpi__value--accent">24/7</span>
+          <span class="nz-kpi__delta">El motor está en un servidor. Cierras la app del móvil y el trabajo sigue.</span>
+        </div>
+        <div class="nz-kpi">
+          <span class="nz-kpi__label">Especialistas por dominio</span>
+          <span class="nz-kpi__value">594</span>
+          <span class="nz-kpi__delta">Skills indexados hoy. No se memorizan nombres: se buscan por significado.</span>
+        </div>
+        <div class="nz-kpi">
+          <span class="nz-kpi__label">Capas de memoria</span>
+          <span class="nz-kpi__value">3</span>
+          <span class="nz-kpi__delta">Preferencias, procedimientos e historial de sesiones.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mm-sec" id="como-funciona" aria-labelledby="t-funciona">
+  <div class="nz-container nz-stack nz-stack--lg">
+    <p class="nz-eyebrow">Cómo funciona</p>
+    <h2 class="nz-h2" id="t-funciona">De la orden al recibo, en seis pasos</h2>
+    <p class="nz-lead mm-lead">Un turno real del sistema, sin cajas negras. Los pasos 2 y 6 son los que lo separan de un chat corriente.</p>
+
+    <ol class="nz-list nz-list--numeric">
+      <li class="nz-list__item"><span><strong>Pides algo.</strong> Por Telegram o por el panel. Una frase basta: el sistema pregunta sólo si la respuesta cambia el alcance, el coste o el riesgo.</span></li>
+      <li class="nz-list__item"><span><strong>Busca el conocimiento por significado.</strong> Los skills están indexados en una base vectorial: la orden se convierte en consulta y devuelven los especialistas del dominio, no los que más se parecen de nombre. Se cargan todos los relevantes, sin tope.</span></li>
+      <li class="nz-list__item"><span><strong>Clasifica el trabajo.</strong> Nivel 1 directo, 2 con una delegación, 3 en paralelo con varios subagentes, 4 orquestación de proyecto completo. La regla es hacer lo mínimo que resuelve el problema, no lo máximo que luciría.</span></li>
+      <li class="nz-list__item"><span><strong>Ejecuta.</strong> Terminal, navegador, ficheros, visión, TTS, Git. Si la tarea se divide, se reparte entre subagentes con contextos aislados para que no se pisen.</span></li>
+      <li class="nz-list__item"><span><strong>Verifica contra la realidad.</strong> No vale «debería funcionar»: se ejecuta el test, se mira la URL, se lee la salida del comando.</span></li>
+      <li class="nz-list__item"><span><strong>Deja recibo y aprende.</strong> Cada entrega cierra con su prueba (SHA del commit, test que pasó, fichero o URL viva). Y lo aprendido va a memoria, a una nota fechada o a un skill nuevo, con commit.</span></li>
+    </ol>
+
+    <div class="nz-callout">
+      <p><strong>«Listo» sin recibo no es listo.</strong></p>
+      <p>El sistema se reporta en cuatro estados públicos: trabajando, comprobando, listo (con prueba) y necesito tu decisión. Sin evidencia, no hay «listo»: hay «comprobando» y se busca la prueba.</p>
+    </div>
+
+    <h3 class="nz-h4">Las cuatro piezas</h3>
+    <div class="nz-dash-grid nz-dash-grid--2">
+      <article class="nz-article nz-article--bordered">
+        <span class="nz-icon-tile nz-icon-tile--outline" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 6h16M4 12h10M4 18h7"/></svg></span>
+        <h4 class="nz-h5">El orquestador</h4>
+        <p>Clasifica, busca, delega e integra. No ejecuta lo que un especialista hace mejor. Corre sobre Hermes Agent, con proveedor de modelos externo y configuración declarativa: el modelo vigente no está escrito en la documentación, se lee de la configuración.</p>
+      </article>
+      <article class="nz-article nz-article--bordered">
+        <span class="nz-icon-tile nz-icon-tile--outline" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+        <h4 class="nz-h5">El catálogo de skills</h4>
+        <p>Cada skill es un procedimiento probado de un dominio —GIS, frontend, datos, PDFs, vídeo, documentación pública española— con sus trampas y su forma de verificar. El catálogo crece con cada tarea resuelta y no tiene número fijo.</p>
+      </article>
+      <article class="nz-article nz-article--bordered">
+        <span class="nz-icon-tile nz-icon-tile--outline" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75"><ellipse cx="12" cy="5" rx="7" ry="2.5"/><path d="M5 5v14c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg></span>
+        <h4 class="nz-h5">La memoria</h4>
+        <p>Tres capas: lo que se sabe de la persona y su entorno, los procedimientos (los skills) y el historial de sesiones, consultable. Antes de preguntar algo, el sistema busca si ya se habló.</p>
+      </article>
+      <article class="nz-article nz-article--bordered">
+        <span class="nz-icon-tile nz-icon-tile--outline" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="4"/></svg></span>
+        <h4 class="nz-h5">El ciclo autónomo</h4>
+        <p>Cron propio: tareas programadas que corren solas cuando nadie mira —salud del sistema, digest de lo hablado, copias de seguridad, publicación de estado, exploración de repositorios— y avisan por Telegram sólo si algo va mal.</p>
+      </article>
+    </div>
+
+    <h3 class="nz-h4">Los cuatro niveles de ejecución</h3>
+    <div class="nz-table-wrap nz-table-wrap--apilable">
+      <table class="nz-table nz-table--apilable">
+        <caption class="nz-table__caption">Cuánto músculo se pone en cada tarea</caption>
+        <thead>
+          <tr><th scope="col">Nivel</th><th scope="col">Herramientas</th><th scope="col">Patrón</th><th scope="col">Ejemplo</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">1 · Directo</th>
+            <td data-etiqueta="Herramientas" class="nz-table__num">1-3</td>
+            <td data-etiqueta="Patrón">El orquestador solo</td>
+            <td data-etiqueta="Ejemplo">Buscar, leer, commitear</td></tr>
+          <tr><th scope="row">2 · Simple</th>
+            <td data-etiqueta="Herramientas" class="nz-table__num">4-8</td>
+            <td data-etiqueta="Patrón">Una delegación</td>
+            <td data-etiqueta="Ejemplo">Reescribir un módulo</td></tr>
+          <tr><th scope="row">3 · Paralelo</th>
+            <td data-etiqueta="Herramientas" class="nz-table__num">8+</td>
+            <td data-etiqueta="Patrón">2-3 subagentes a la vez</td>
+            <td data-etiqueta="Ejemplo">Frontend y pruebas en paralelo</td></tr>
+          <tr><th scope="row">4 · Orquestación</th>
+            <td data-etiqueta="Herramientas" class="nz-table__num">Proyecto</td>
+            <td data-etiqueta="Patrón">Planificar, implementar, revisar</td>
+            <td data-etiqueta="Ejemplo">Una funcionalidad completa</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="nz-h4">El ciclo autónomo: lo que corre sin ti</h3>
+    <p class="nz-lead mm-lead">Programado en el servidor. Los horarios son los reales del sistema, leídos hoy de su propio planificador.</p>
+    <div class="nz-table-wrap nz-table-wrap--apilable">
+      <table class="nz-table nz-table--apilable">
+        <caption class="nz-table__caption">Trabajos programados que no esperan a que nadie los pida</caption>
+        <thead>
+          <tr><th scope="col">Trabajo</th><th scope="col">Cuándo</th><th scope="col">Qué hace</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">vigia-cron</th><td data-etiqueta="Cuándo">Cada hora</td><td data-etiqueta="Qué hace">Comprueba que los demás trabajos se disparan; avisa si alguno falla.</td></tr>
+          <tr><th scope="row">vigia-puente</th><td data-etiqueta="Cuándo">Cada minuto</td><td data-etiqueta="Qué hace">Mantiene vivo el canal entre el servidor y el panel web.</td></tr>
+          <tr><th scope="row">mastermind-scout</th><td data-etiqueta="Cuándo">01:00 y 13:00</td><td data-etiqueta="Qué hace">Rastrea repositorios y novedades para alimentar el catálogo de skills.</td></tr>
+          <tr><th scope="row">mastermind-backup</th><td data-etiqueta="Cuándo">04:00</td><td data-etiqueta="Qué hace">Copia memoria y skills al repositorio privado. Silencio = todo bien.</td></tr>
+          <tr><th scope="row">mastermind-doctor</th><td data-etiqueta="Cuándo">05:00</td><td data-etiqueta="Qué hace">Revisión de salud del sistema y de sus invariantes.</td></tr>
+          <tr><th scope="row">mastermind-digest</th><td data-etiqueta="Cuándo">07:00</td><td data-etiqueta="Qué hace">Destila las sesiones del día a una nota; la mañana empieza leyéndola.</td></tr>
+          <tr><th scope="row">publicar-estado</th><td data-etiqueta="Cuándo">Cada hora, al minuto 10</td><td data-etiqueta="Qué hace">Publica el estado medido y el panel lo pinta.</td></tr>
+          <tr><th scope="row">mastermind-weekly</th><td data-etiqueta="Cuándo">Lunes, 09:00</td><td data-etiqueta="Qué hace">Mantenimiento y repaso semanal.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="mm-sec" id="movil" aria-labelledby="t-movil">
+  <div class="nz-container nz-stack nz-stack--lg">
+    <p class="nz-eyebrow">Desde el móvil</p>
+    <h2 class="nz-h2" id="t-movil">El móvil es la puerta, no el motor</h2>
+    <p class="nz-lead mm-lead">La tentación es dejar el portátil encendido con el agente dentro. Se cae, se duerme, se cierra la tapa. La forma que funciona: el motor en un servidor y el móvil como mando.</p>
+
+    <div class="nz-dash-grid nz-dash-grid--2">
+      <article class="nz-article nz-article--bordered">
+        <span class="nz-icon-tile nz-icon-tile--outline" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 4 3 11l6 2.5L11.5 21 21 4Z"/></svg></span>
+        <h4 class="nz-h5">Un chat de Telegram</h4>
+        <p>Un bot propio, atado a un usuario autorizado, es el mando principal: se escribe, se dicta o se manda una nota de voz. Responde también en un grupo de confianza, con su propio personaje ahí dentro. Si la orden empieza o acaba con un rayo, contesta en tres líneas: sin rodeos.</p>
+      </article>
+      <article class="nz-article nz-article--bordered">
+        <span class="nz-icon-tile nz-icon-tile--outline" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></span>
+        <h4 class="nz-h5">Un panel web</h4>
+        <p>Chat completo, ficheros del servidor, consola, métricas y el estado del sistema en vivo, con acceso por token. Es la vista de control cuando hay que ver más que una conversación.</p>
+      </article>
+      <article class="nz-article nz-article--bordered">
+        <span class="nz-icon-tile nz-icon-tile--outline" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+        <h4 class="nz-h5">Trabajos que sobreviven a la app</h4>
+        <p>Lo largo se lanza como trabajo desacoplado en el servidor: con límite de tiempo, registro en vivo, opción de cancelar, rama aislada y recuento real de consumo. Cierras Telegram y sigue corriendo.</p>
+      </article>
+      <article class="nz-article nz-article--bordered">
+        <span class="nz-icon-tile nz-icon-tile--outline" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>
+        <h4 class="nz-h5">Voz en los dos sentidos</h4>
+        <p>Se le habla con notas de voz y contesta con voz sintetizada en castellano. Útil con las manos ocupadas: se pide, se escucha y se sigue.</p>
+      </article>
+    </div>
+
+    <h3 class="nz-h4">Órdenes que ya se dan así</h3>
+    <ul class="nz-list nz-list--check">
+      <li class="nz-list__item">«Arregla el buscador de la web y dime la URL para verlo» — cambia código, verifica en el navegador y devuelve el enlace vivo.</li>
+      <li class="nz-list__item">«¿Cómo va el disco del servidor?» — lee la máquina de verdad y contesta con números, no con estimaciones.</li>
+      <li class="nz-list__item">«Publica la entrada de hoy» — el trabajo se lanza en el servidor; el móvil se puede guardar en el bolsillo.</li>
+      <li class="nz-list__item">«Repásame lo de ayer» — el digest del día ya está escrito y resumido.</li>
+    </ul>
+
+    <h3 class="nz-h4">Lo que llega solo al móvil</h3>
+    <div class="nz-table-wrap nz-table-wrap--apilable">
+      <table class="nz-table nz-table--apilable">
+        <thead>
+          <tr><th scope="col">Aviso</th><th scope="col">Cuándo</th><th scope="col">Por qué importa</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Digest de sesiones</th><td data-etiqueta="Cuándo">Cada mañana</td><td data-etiqueta="Por qué importa">Empiezas el día sabiendo qué se hizo, sin reexplicar el contexto.</td></tr>
+          <tr><th scope="row">Salud del sistema</th><td data-etiqueta="Cuándo">Cada madrugada</td><td data-etiqueta="Por qué importa">Los problemas se cuentan antes de que se noten.</td></tr>
+          <tr><th scope="row">Alertas de vigilancia</th><td data-etiqueta="Cuándo">Sólo si hay fallo</td><td data-etiqueta="Por qué importa">Cuando no llega nada, es que todo está en orden: el silencio es la buena noticia.</td></tr>
+          <tr><th scope="row">Informe semanal</th><td data-etiqueta="Cuándo">Lunes por la mañana</td><td data-etiqueta="Por qué importa">Mantenimiento, deuda pendiente y qué toca esta semana.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="nz-callout">
+      <p><strong>Una frontera honesta.</strong></p>
+      <p>El agente del servidor no alcanza el ordenador de casa: son máquinas distintas y no hay pasillo abierto entre ellas. Lo que vive en el PC se manda al servidor adjuntándolo en el chat, o se sube al repositorio para que lo recoja de ahí. Prometer lo contrario sería mentir.</p>
+    </div>
+  </div>
+</section>
+
+<section class="mm-sec" id="seguridad" aria-labelledby="t-seguridad">
+  <div class="nz-container nz-stack nz-stack--lg">
+    <p class="nz-eyebrow">Seguridad</p>
+    <h2 class="nz-h2" id="t-seguridad">Qué protege al sistema</h2>
+    <p class="nz-lead mm-lead">Un agente con acceso a terminal, ficheros y credenciales es una herramienta potente y un riesgo real. Estas son las defensas que están montadas, no las que estaría bien tener.</p>
+
+    <div class="nz-thirds">
+      <article class="nz-article nz-article--bordered">
+        <p class="nz-lbl nz-lbl--accent">01 · Secretos</p>
+        <h4 class="nz-h5">Las claves viven en un solo sitio</h4>
+        <p>Fichero de entorno con permisos restringidos, fuera del repositorio. Ni en notas, ni en commits, ni en el chat. Las credenciales se leen del fichero en el momento de usarlas y se comprueban contra el servicio: nunca se citan de memoria.</p>
+      </article>
+      <article class="nz-article nz-article--bordered">
+        <p class="nz-lbl">02 · Repositorios</p>
+        <h4 class="nz-h5">Dos repos, uno privado</h4>
+        <p>Todo lo personal —memorias, datos, notas internas— vive en un repositorio privado. El público contiene sólo la guía y las plantillas. El despliegue de la web pasa por una comprobación que <em>aborta</em> si aparece un fichero de memoria personal en el sitio.</p>
+      </article>
+      <article class="nz-article nz-article--bordered">
+        <p class="nz-lbl">03 · Red</p>
+        <h4 class="nz-h5">Sin puertas abiertas a internet</h4>
+        <p>El servidor no expone servicios al exterior: su acceso de administración sólo responde desde el ordenador del dueño. El panel habla con el servidor por un canal que sale <em>de dentro hacia fuera</em> y se autentica con un token compartido, en un fichero con permisos restringidos.</p>
+      </article>
+      <article class="nz-article nz-article--bordered">
+        <p class="nz-lbl">04 · Frenos</p>
+        <h4 class="nz-h5">Permisos y mano dura controlada</h4>
+        <p>Los comandos destructivos se bloquean y hay lista blanca de lo permitido; el código se ejecuta en espacio aislado. En cambios críticos —más de cinco ficheros, arquitectura, despliegue— el sistema planifica, muestra el diff y espera un «sí» explícito. Nada se borra del repositorio: sólo se crea o se modifica.</p>
+      </article>
+      <article class="nz-article nz-article--bordered">
+        <p class="nz-lbl">05 · Vigilancia</p>
+        <h4 class="nz-h5">Vigías y chequeos</h4>
+        <p>Un vigilante comprueba cada hora que los trabajos programados se disparan; otro mantiene el canal con el panel; un tercero, fuera del propio agente, cuida la memoria del servidor y lo reinicia si se atasca. Todos avisan por Telegram y callan cuando no hay nada que decir.</p>
+      </article>
+      <article class="nz-article nz-article--bordered">
+        <p class="nz-lbl">06 · Copias</p>
+        <h4 class="nz-h5">Memoria y skills, en el repo</h4>
+        <p>Cada madrugada se copian la memoria y el catálogo de skills al repositorio privado. Si se pierde el equipo, la reconstrucción está documentada paso a paso y el conocimiento no se pierde con él.</p>
+      </article>
+    </div>
+
+    <h3 class="nz-h4">Amenaza y defensa, una a una</h3>
+    <div class="nz-table-wrap nz-table-wrap--apilable">
+      <table class="nz-table nz-table--apilable">
+        <thead>
+          <tr><th scope="col">Riesgo</th><th scope="col">Defensa montada</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Una clave acaba en un sitio público</th><td data-etiqueta="Defensa">Secretos sólo en el fichero de entorno con permisos restringidos; nada de claves en notas, commits ni conversaciones, y comprobación periódica del repositorio.</td></tr>
+          <tr><th scope="row">Datos personales se filtran en la web</th><td data-etiqueta="Defensa">Repositorio personal separado del público y comprobación previa al despliegue que cancela la publicación si aparece memoria o identidad.</td></tr>
+          <tr><th scope="row">Alguien de fuera entra al servidor</th><td data-etiqueta="Defensa">Sin puertos hacia internet; administración accesible sólo desde el equipo del dueño; canal del panel autenticado con token.</td></tr>
+          <tr><th scope="row">El agente hace algo destructivo</th><td data-etiqueta="Defensa">Lista blanca de comandos, bloqueo de los peligrosos, espacio aislado, confirmación humana en cambios críticos y vuelta atrás con un solo comando.</td></tr>
+          <tr><th scope="row">Trabajo mal hecho dado por bueno</th><td data-etiqueta="Defensa">Recibo obligatorio por entrega: commit, prueba ejecutada, fichero o URL viva. Sin prueba, el estado es «comprobando».</td></tr>
+          <tr><th scope="row">El servidor se queda sin memoria</th><td data-etiqueta="Defensa">Swap, techo de memoria, reinicio incondicional y un vigilante externo que libera el proceso glotón antes de que se caiga todo.</td></tr>
+          <tr><th scope="row">Se pierde el ordenador</th><td data-etiqueta="Defensa">Copia diaria de memoria y skills al repositorio privado, con reconstrucción documentada.</td></tr>
+          <tr><th scope="row">El bot habla con quien no debe</th><td data-etiqueta="Defensa">Sólo atiende a los usuarios autorizados; en el grupo, con reglas propias y sin datos internos.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="nz-callout nz-callout--note">
+      <p><strong>Lo que no hay, dicho claro.</strong></p>
+      <p>No hay cifrado propio de extremo a extremo sobre los canales de mensajería: se usan los del proveedor. El servidor es un recurso pequeño —un núcleo y dos gigas de memoria—, suficiente para orquestar y ajustado para compilar: cuando se queda corto, se amplía, y eso es una decisión de gasto, no un misterio. Y todo esto vale para un sistema de una sola persona: la seguridad se apoya en que hay un único dueño, no en un equipo de operaciones.</p>
+    </div>
+  </div>
+</section>
+
+<section class="mm-sec" id="replicar" aria-labelledby="t-replicar">
+  <div class="nz-container nz-stack nz-stack--lg">
+    <p class="nz-eyebrow">Replicarlo</p>
+    <h2 class="nz-h2" id="t-replicar">Si quieres uno igual</h2>
+    <p class="nz-lead mm-lead">El patrón es portable: un agente con skills, una búsqueda semántica de procedimientos y una máquina siempre encendida. La guía clonable está publicada, en castellano y sin cajas negras.</p>
+    <div class="nz-split nz-split--40-60">
+      <ol class="nz-list nz-list--numeric">
+        <li class="nz-list__item"><span><strong>Clona la guía pública</strong> — skills, motor y documentación.</span></li>
+        <li class="nz-list__item"><span><strong>Copia los skills</strong> a la instalación de tu agente.</span></li>
+        <li class="nz-list__item"><span><strong>Indexa por significado</strong> — base vectorial: se consulta por descripción, no por nombre de fichero.</span></li>
+        <li class="nz-list__item"><span><strong>Móntalo en un servidor</strong> — el portátil es para trabajar; el agente, para estar encendido.</span></li>
+      </ol>
+      <pre class="nz-code--block mm-code">git clone https://github.com/Ntizar/MasterMindPublic.git
+cd MasterMindPublic
+cp -r agent/skills/* &lt;tu-agente&gt;/skills/
+
+# índice semántico: la orden se busca por significado
+python scripts/indexar-skills.py</pre>
+    </div>
+
+    <div class="nz-cta-banner">
+      <span class="nz-cta-banner__eyebrow">Guía abierta</span>
+      <h3 class="nz-cta-banner__title">Léelo entero en el repositorio</h3>
+      <p class="nz-cta-banner__body">Arquitectura, reglas, plantillas de configuración y el motor completo. Sin licencias raras y sin promesas: lo que hay es lo que corre.</p>
+      <div class="nz-cta-banner__actions">
+        <a class="nz-btn nz-btn--primary" href="https://github.com/Ntizar/MasterMindPublic" target="_blank" rel="noopener">Ver MasterMindPublic</a>
+        <a class="nz-cta nz-cta--underline" href="./index.html">Volver a la portada</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="nz-footer">
+  <div class="nz-container nz-cluster nz-cluster--between">
+    <p class="nz-text--small">MasterMind se ejecuta con Hermes Agent sobre NaN.builders. Diseño con Aurora 8 y datos medidos el 13 de octubre de 2026.</p>
+    <p class="nz-text--small">Hecho con ❤️ por David Antizar</p>
+  </div>
+</footer>
+</body>
+</html>
